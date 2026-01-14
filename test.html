@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realiza un Test - Rincón Verde</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Cabecera reutilizada del catálogo -->
+  <header class="site-header">
+    <div class="top-bar">
+      Descubre nuestras plantas de temporada | Envío gratis en compras superiores a 50€
+    </div>
+    <div class="header-main">
+      <div class="logo">🌱 Rincón Verde</div>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Catálogo</a>
+        <a href="test.html" class="nav-link">Realiza un Test</a>
+        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+      </nav>
+      <div class="user-actions">
+        <button id="open-cart" class="cart-button" aria-label="Ver carrito">
+          <span class="cart-icon">&#x1f6cd;</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <section class="catalogo">
+      <!-- Encabezado del test -->
+      <header class="catalogo-header">
+        <h1>🧪 Encuentra tu planta ideal</h1>
+        <p>Responde algunas preguntas y te recomendaremos la planta perfecta para ti.</p>
+      </header>
+      <div class="test-container">
+        <!-- Formulario del test -->
+        <form id="form-test" class="test-form">
+          <fieldset>
+            <legend>❓ Pregunta 1: ¿Cuánta luz natural recibe tu hogar?</legend>
+            <label><input type="radio" name="luz" value="mucha" required> ☀️ Mucha luz directa</label>
+            <label><input type="radio" name="luz" value="media" required> 🌤️ Luz media</label>
+            <label><input type="radio" name="luz" value="poca" required> 🌙 Poca luz</label>
+          </fieldset>
+          <fieldset>
+            <legend>❓ Pregunta 2: ¿Tienes tiempo para cuidar plantas?</legend>
+            <label><input type="radio" name="tiempo" value="mucho" required> ✋ Sí, diariamente</label>
+            <label><input type="radio" name="tiempo" value="poco" required> 🏃 No, tengo poco tiempo</label>
+          </fieldset>
+          <fieldset>
+            <legend>❓ Pregunta 3: ¿Cuál es tu presupuesto?</legend>
+            <label><input type="radio" name="presupuesto" value="bajo" required> 💰 Bajo (&lt; €20)</label>
+            <label><input type="radio" name="presupuesto" value="medio" required> 💵 Medio (€20-50)</label>
+            <label><input type="radio" name="presupuesto" value="alto" required> 💸 Alto (&gt; €50)</label>
+          </fieldset>
+          <button type="submit" class="limpiar-btn">Ver mi recomendación 🎯</button>
+        </form>
+
+        <!-- Resultado del test -->
+        <div id="resultado-test" class="sin-resultados" style="display:none;">
+          <h2>🎉 Tu recomendación:</h2>
+          <p id="recomendacion-texto"></p>
+          <button id="volver-test" class="limpiar-btn">Volver al test</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <script src="test.js"></script>
+  <!-- Script de carrito: gestiona la lógica del carrito en todas las páginas -->
+  <script src="cart.js"></script>
+</body>
+</html>

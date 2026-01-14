@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hito 1 - Catálogo de Plantas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <!-- Barra informativa superior -->
+    <div class="top-bar">
+      Descubre nuestras plantas de temporada | Envío gratis en compras superiores a 50€
+    </div>
+    <!-- Cabecera principal con logo y navegación -->
+    <div class="header-main">
+      <div class="logo">🌱 Rincón Verde</div>
+      <nav class="nav-menu">
+        <!-- Enlaces a las páginas del proyecto simplificado -->
+        <a href="index.html" class="nav-link">Catálogo</a>
+        <a href="test.html" class="nav-link">Realiza un Test</a>
+        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+      </nav>
+      <!-- Botón del carrito: muestra un icono y un contador de artículos -->
+      <div class="user-actions">
+        <button id="open-cart" class="cart-button" aria-label="Ver carrito">
+          <span class="cart-icon">&#x1f6cd;</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="site-main">
+    <!-- Panel de filtros lateral -->
+    <aside class="filtros">
+      <h2>Filtros</h2>
+      <!-- Grupo de filtro: Ramos pre-hechos -->
+      <div class="filtro-grupo">
+        <button class="filtro-toggle" data-target="opciones-ramos">📦 Ramos Pre-hechos</button>
+        <div class="filtro-opciones" id="opciones-ramos">
+          <button class="filtro-opcion" data-grupo="ramos" data-valor="todos">Todos</button>
+          <button class="filtro-opcion" data-grupo="ramos" data-valor="si">Solo Ramos</button>
+          <button class="filtro-opcion" data-grupo="ramos" data-valor="no">Solo Plantas</button>
+        </div>
+      </div>
+      <!-- Grupo de filtro: Temporada -->
+      <div class="filtro-grupo">
+        <button class="filtro-toggle" data-target="opciones-temporada">🌱 Temporada</button>
+        <div class="filtro-opciones" id="opciones-temporada">
+          <button class="filtro-opcion" data-grupo="temporada" data-valor="todas">Todas</button>
+          <button class="filtro-opcion" data-grupo="temporada" data-valor="primavera">Primavera</button>
+          <button class="filtro-opcion" data-grupo="temporada" data-valor="verano">Verano</button>
+          <button class="filtro-opcion" data-grupo="temporada" data-valor="otoño">Otoño</button>
+          <button class="filtro-opcion" data-grupo="temporada" data-valor="invierno">Invierno</button>
+        </div>
+      </div>
+      <!-- Grupo de filtro: Dificultad -->
+      <div class="filtro-grupo">
+        <button class="filtro-toggle" data-target="opciones-dificultad">⭐ Dificultad</button>
+        <div class="filtro-opciones" id="opciones-dificultad">
+          <button class="filtro-opcion" data-grupo="dificultad" data-valor="todas">Todas</button>
+          <button class="filtro-opcion" data-grupo="dificultad" data-valor="facil">Fácil</button>
+          <button class="filtro-opcion" data-grupo="dificultad" data-valor="media">Media</button>
+          <button class="filtro-opcion" data-grupo="dificultad" data-valor="dificil">Difícil</button>
+        </div>
+      </div>
+      <button id="limpiarFiltros" class="limpiar-btn">Limpiar filtros</button>
+    </aside>
+
+    <!-- Sección de catálogo de productos -->
+    <section class="catalogo">
+      <header class="catalogo-header">
+        <h1 id="titulo-catalogo">Todas las Plantas</h1>
+        <p id="texto-filtro-actual">Mostrando: Todas las plantas</p>
+      </header>
+      <div class="productos-grid" id="productos-grid">
+        <!-- Tarjetas de producto estáticas para Hito 1 -->
+        <article class="producto-card" data-ramos="no" data-temporada="verano" data-dificultad="facil" data-nombre="Anturio Rojo" data-precio="33.00" data-imagen="img/plantas/anturio.jpg">
+          <div class="producto-imagen">
+            <!-- Etiquetas que muestran la temporada y la dificultad -->
+            <span class="badge badge-dificultad facil">Fácil</span>
+            <span class="badge badge-temporada verano">Verano</span>
+            <img src="img/plantas/anturio.jpg" alt="Anturio Rojo">
+          </div>
+          <div class="producto-info">
+            <h3>Anturio Rojo</h3>
+            <p class="nombre-cientifico">Anthurium andraeanum</p>
+            <p class="precio">€33.00</p>
+            <!-- Botón para añadir al carrito -->
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+        <article class="producto-card" data-ramos="no" data-temporada="verano" data-dificultad="media" data-nombre="Planta de Ejemplo" data-precio="20.00" data-imagen="img/plantas/default.jpg">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad media">Media</span>
+            <span class="badge badge-temporada verano">Verano</span>
+            <img src="img/plantas/default.jpg" alt="Planta de ejemplo">
+          </div>
+          <div class="producto-info">
+            <h3>Planta de Ejemplo</h3>
+            <p class="nombre-cientifico">Lorem ipsum</p>
+            <p class="precio">€20.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+        <article class="producto-card" data-ramos="si" data-temporada="otoño" data-dificultad="facil" data-nombre="Ramo Pre-hecho" data-precio="40.00" data-imagen="img/plantas/default.jpg">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad facil">Fácil</span>
+            <span class="badge badge-temporada otoño">Otoño</span>
+            <img src="img/plantas/default.jpg" alt="Ramo Pre-hecho">
+          </div>
+          <div class="producto-info">
+            <h3>Ramo Pre-hecho</h3>
+            <p class="nombre-cientifico">Mix de flores</p>
+            <p class="precio">€40.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Suculenta decorativa -->
+        <article class="producto-card" data-ramos="no" data-temporada="todo_año" data-dificultad="facil" data-nombre="Suculenta Decorativa" data-precio="12.00" data-imagen="img/plantas/succulent.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad facil">Fácil</span>
+            <span class="badge badge-temporada todo_año">Todo el año</span>
+            <img src="img/plantas/succulent.png" alt="Suculenta decorativa">
+          </div>
+          <div class="producto-info">
+            <h3>Suculenta Decorativa</h3>
+            <p class="nombre-cientifico">Echeveria</p>
+            <p class="precio">€12.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Bouquet colorido (ramos) -->
+        <article class="producto-card" data-ramos="si" data-temporada="primavera" data-dificultad="media" data-nombre="Bouquet Colorido" data-precio="45.00" data-imagen="img/plantas/bouquet.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad media">Media</span>
+            <span class="badge badge-temporada primavera">Primavera</span>
+            <img src="img/plantas/bouquet.png" alt="Bouquet colorido">
+          </div>
+          <div class="producto-info">
+            <h3>Bouquet Colorido</h3>
+            <p class="nombre-cientifico">Rosas y Lirios</p>
+            <p class="precio">€45.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Planta interior abstracta -->
+        <article class="producto-card" data-ramos="no" data-temporada="invierno" data-dificultad="media" data-nombre="Planta Interior" data-precio="25.00" data-imagen="img/plantas/indoor.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad media">Media</span>
+            <span class="badge badge-temporada invierno">Invierno</span>
+            <img src="img/plantas/indoor.png" alt="Planta de interior">
+          </div>
+          <div class="producto-info">
+            <h3>Planta Interior</h3>
+            <p class="nombre-cientifico">Philodendron</p>
+            <p class="precio">€25.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Bonsai (dificultad alta) -->
+        <!--
+          En esta tarjeta añadimos un ejemplo con dificultad "difícil" para que
+          el filtro de dificultad tenga contenido diverso. La imagen se ha
+          generado de manera ilustrativa y está almacenada en img/plantas/bonsai.png.
+          Al fijar data-temporada="primavera" indicamos que esta planta es
+          especialmente apta para la primavera. data-ramos="no" indica que no
+          se trata de un ramo.
+        -->
+        <article class="producto-card" data-ramos="no" data-temporada="primavera" data-dificultad="dificil" data-nombre="Bonsai Decorativo" data-precio="30.00" data-imagen="img/plantas/bonsai.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad dificil">Difícil</span>
+            <span class="badge badge-temporada primavera">Primavera</span>
+            <img src="img/plantas/bonsai.png" alt="Bonsai en maceta">
+          </div>
+          <div class="producto-info">
+            <h3>Bonsai Decorativo</h3>
+            <p class="nombre-cientifico">Ficus Microcarpa</p>
+            <p class="precio">€30.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Cactus con flores (otoño, fácil) -->
+        <!--
+          Un cactus es una buena opción de cuidado sencillo. data-temporada="otoño"
+          complementa los filtros de temporada existentes y data-dificultad
+          indica que es fácil de cuidar.
+        -->
+        <article class="producto-card" data-ramos="no" data-temporada="otoño" data-dificultad="facil" data-nombre="Cactus Florido" data-precio="15.00" data-imagen="img/plantas/cactus.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad facil">Fácil</span>
+            <span class="badge badge-temporada otoño">Otoño</span>
+            <img src="img/plantas/cactus.png" alt="Cactus en flor">
+          </div>
+          <div class="producto-info">
+            <h3>Cactus Florido</h3>
+            <p class="nombre-cientifico">Mammillaria hahniana</p>
+            <p class="precio">€15.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+
+        <!-- Tarjeta adicional: Orquídea (primavera, media) -->
+        <!--
+          Esta tarjeta muestra una orquídea con dificultad media y temporada
+          de primavera. Sirve para ampliar la diversidad de ejemplos en el
+          catálogo, de manera que los filtros tengan más tarjetas sobre las
+          que actuar.
+        -->
+        <article class="producto-card" data-ramos="no" data-temporada="primavera" data-dificultad="media" data-nombre="Orquídea Exótica" data-precio="28.00" data-imagen="img/plantas/orchid_actual.png">
+          <div class="producto-imagen">
+            <span class="badge badge-dificultad media">Media</span>
+            <span class="badge badge-temporada primavera">Primavera</span>
+            <img src="img/plantas/orchid_actual.png" alt="Orquídea rosada">
+          </div>
+          <div class="producto-info">
+            <h3>Orquídea Exótica</h3>
+            <p class="nombre-cientifico">Phalaenopsis</p>
+            <p class="precio">€28.00</p>
+            <button class="add-to-cart">Añadir a la cesta</button>
+          </div>
+        </article>
+      </div>
+      <div id="sin-resultados" class="sin-resultados" style="display:none;">
+        <p>No se encontraron plantas con los filtros seleccionados.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <script src="script.js"></script>
+  <!-- Script de carrito: gestiona la lógica del carrito en todas las páginas -->
+  <script src="cart.js"></script>
+</body>
+</html>

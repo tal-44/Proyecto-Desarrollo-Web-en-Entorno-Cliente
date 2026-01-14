@@ -1,0 +1,344 @@
+/*
+ * Estilos básicos para el Hito 1.
+ * Se agrupan en un único archivo para simplificar la estructura.
+ * El objetivo es replicar un aspecto limpio y actual con el mínimo CSS
+ * necesario para practicar manipulación del DOM y eventos.
+ */
+
+/* Reset simple */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+/* Cabecera */
+.top-bar {
+  background-color: #8ab078;
+  color: #fff;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.header-main {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2c662d;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #2c662d;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+  background-color: #e5f5e0;
+}
+
+.cart-count {
+  background-color: #2c662d;
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+/* Disposición principal */
+.site-main {
+  display: flex;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  gap: 2rem;
+}
+
+/* Panel de filtros */
+.filtros {
+  width: 220px;
+  background-color: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.filtros h2 {
+  margin-top: 0;
+  color: #2c662d;
+}
+
+.filtro-grupo {
+  margin-bottom: 1rem;
+}
+
+.filtro-toggle {
+  width: 100%;
+  background-color: #e5f5e0;
+  border: none;
+  padding: 0.5rem;
+  text-align: left;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #2c662d;
+}
+
+.filtro-opciones {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+.filtro-opciones.visible {
+  display: block;
+}
+
+.filtro-opcion {
+  display: block;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  background-color: #f9f9f9;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 0.3rem;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+.filtro-opcion.selected,
+.filtro-opcion:hover {
+  background-color: #d6eecf;
+}
+
+.limpiar-btn {
+  background-color: #f0dede;
+  border: none;
+  padding: 0.5rem;
+  width: 100%;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.limpiar-btn:hover {
+  background-color: #e9c8c8;
+}
+
+/* Catálogo */
+.catalogo {
+  flex: 1;
+}
+
+.catalogo-header h1 {
+  margin: 0;
+  color: #2c662d;
+}
+
+.catalogo-header p {
+  margin: 0.5rem 0 1rem;
+  color: #555;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.producto-card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.producto-imagen img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.producto-info {
+  padding: 0.8rem;
+}
+
+.producto-info h3 {
+  margin: 0 0 0.3rem;
+  color: #2c662d;
+  font-size: 1.1rem;
+}
+
+.producto-info p {
+  margin: 0.2rem 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* =============================================================
+ * Etiquetas (badges) para temporada y dificultad
+ * Estas clases permiten mostrar pequeñas etiquetas en las esquinas
+ * de la imagen de cada tarjeta. La clase .badge-dificultad se
+ * posiciona a la izquierda y .badge-temporada a la derecha. Los
+ * colores se definen según el valor de la temporada o la dificultad.
+ */
+
+/* Aseguramos que las imágenes de productos sean el contenedor padre de las etiquetas */
+.producto-imagen {
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: bold;
+  color: #ffffff;
+  text-transform: uppercase;
+  pointer-events: none; /* no bloquea clicks */
+}
+
+/* Posicionamiento de las etiquetas */
+.badge-dificultad {
+  left: 0.5rem;
+  top: 0.5rem;
+}
+
+.badge-temporada {
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+/* Colores de temporada */
+.badge-temporada.primavera { background-color: #80c581; }
+.badge-temporada.verano { background-color: #f5b041; }
+.badge-temporada.otoño { background-color: #d35400; }
+.badge-temporada.invierno { background-color: #5dade2; }
+.badge-temporada.todo_año { background-color: #95a5a6; }
+
+/* Colores de dificultad */
+.badge-dificultad.facil { background-color: #27ae60; }
+.badge-dificultad.media { background-color: #e67e22; }
+.badge-dificultad.dificil { background-color: #c0392b; }
+
+/* Botón para añadir productos al carrito */
+.add-to-cart {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.4rem;
+  background-color: #2c662d;
+  border: none;
+  border-radius: 4px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.add-to-cart:hover {
+  background-color: #24572b;
+}
+
+/* Estilo del botón del carrito en la cabecera */
+.cart-button {
+  background-color: #e5f5e0;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  font-size: 1.5rem;
+  color: #2c662d;
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 0.4rem;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.cart-button:hover {
+  background-color: #d6eecf;
+}
+
+/* Icono dentro del botón del carrito */
+.cart-icon {
+  margin-right: 0.25rem;
+}
+
+/* Etiqueta de contador dentro del icono del carrito */
+.cart-count {
+  background-color: #e74c3c;
+  color: #ffffff;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  position: absolute;
+  top: -0.4rem;
+  right: -0.6rem;
+  display: none; /* se activa mediante JavaScript cuando hay artículos */
+}
+
+.sin-resultados {
+  padding: 1rem;
+  text-align: center;
+  background-color: #fff3f3;
+  border-radius: 4px;
+  color: #b00020;
+  margin-top: 1rem;
+}
+
+/* Pie de página */
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #f1f1f1;
+  color: #777;
+  margin-top: 2rem;
+}
+
+/* =============================================================
+ * Estilos adicionales para la página de test
+ * Estos estilos se aplican a los fieldset, leyendas y etiquetas
+ * dentro del formulario del test para mejorar la legibilidad
+ * y la estructura vertical de las preguntas. No afectan a las
+ * demás páginas del proyecto.
+ */
+.test-container fieldset {
+  border: none;
+  margin-bottom: 1rem;
+  padding: 0;
+}
+
+.test-container legend {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  display: block;
+  color: #2c662d;
+}
+
+.test-container label {
+  display: block;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
