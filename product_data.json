@@ -1,4 +1,5 @@
 {
+  "comentario": "Estaba pensando en eliminar es_para_ramo y usar es_ramo, porque aquellas plantas de las que se pueda hacer ramo, necesitarian dos imagenes. Me dices",
   "categorias": [
     {
       "id": 1,
@@ -456,6 +457,51 @@
       "dificultad": "Fácil",
       "riego": "Cada 15 días",
       "es_para_ramo": false
+    },
+    {
+      "id": 31,
+      "nombre": "Ramo Romántico",
+      "nombre_cientifico": "Rosas rojas y flores silvestres",
+      "categoria_id": 5,
+      "precio": 45.00,
+      "stock": 10,
+      "temporada": "primavera",
+      "descripcion": "Un ramo elegante compuesto por rosas rojas de tallo largo y delicadas flores silvestres. Perfecto para expresar amor y pasión en ocasiones especiales.",
+      "imagen": "bouquet1.png",
+      "dificultad": "media",
+      "riego": "Agua fresca cada 2 días",
+      "es_para_ramo": false,
+      "es_ramo": true
+    },
+    {
+      "id": 32,
+      "nombre": "Ramo Primavera",
+      "nombre_cientifico": "Flores coloridas y alegres",
+      "categoria_id": 5,
+      "precio": 35.00,
+      "stock": 15,
+      "temporada": "primavera",
+      "descripcion": "Explosión de colores primaverales con tulipanes, margaritas y flores de temporada. Ideal para alegrar cualquier espacio.",
+      "imagen": "bouquet2.png",
+      "dificultad": "facil",
+      "riego": "Agua fresca cada 2-3 días",
+      "es_para_ramo": false,
+      "es_ramo": true
+    },
+    {
+      "id": 33,
+      "nombre": "Ramo Celebración",
+      "nombre_cientifico": "Mix de flores festivas",
+      "categoria_id": 5,
+      "precio": 55.00,
+      "stock": 8,
+      "temporada": "otoño",
+      "descripcion": "Composición festiva con lirios, crisantemos y follaje otoñal. Perfecto para celebraciones, cumpleaños y momentos especiales.",
+      "imagen": "bouquet3.png",
+      "dificultad": "media",
+      "riego": "Agua fresca diaria",
+      "es_para_ramo": false,
+      "es_ramo": true
     }
   ]
 }

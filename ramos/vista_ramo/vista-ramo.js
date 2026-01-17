@@ -1,0 +1,287 @@
+/**
+ * vista-ramo.js
+ * Controla la funcionalidad de la página de detalle de un ramo individual
+ * Carga los datos del ramo desde el localStorage y muestra ramos relacionados
+ */
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Variables globales
+  let productoActual = null;
+  let todosLosProductos = [];
+
+  /**
+   * Carga los datos del producto desde product_data.json
+   */
+  const cargarProductos = async () => {
+    try {
+      const response = await fetch('../../product_data.json');
+      if (!response.ok) throw new Error('Error al cargar los productos');
+      const data = await response.json();
+      return data.productos || [];
+    } catch (error) {
+      console.error('Error cargando productos:', error);
+      mostrarError('No se pudieron cargar los datos del producto.');
+      return [];
+    }
+  };
+
+  /**
+   * Obtiene el ramo actual desde los parámetros de URL, sessionStorage o buscándolo en el JSON
+   */
+  const obtenerRamoActual = () => {
+    const params = new URLSearchParams(window.location.search);
+    const nombre = params.get('nombre');
+    
+    // Primero intentar obtener de sessionStorage (desde ramos.js)
+    const almacenado = sessionStorage.getItem('ramoActual');
+    if (almacenado) {
+      const ramoSession = JSON.parse(almacenado);
+      // Verificar que el nombre coincide con el parámetro URL
+      if (!nombre || ramoSession.nombre === decodeURIComponent(nombre)) {
+        return ramoSession;
+      }
+    }
+    
+    // Si hay nombre en URL, buscar en el JSON
+    if (nombre) {
+      const nombreDecodificado = decodeURIComponent(nombre);
+      const ramoEncontrado = todosLosProductos.find(p => 
+        p.nombre === nombreDecodificado && p.es_ramo === true
+      );
+      if (ramoEncontrado) {
+        // Ajustar la ruta de imagen para vista_ramo/
+        return {
+          ...ramoEncontrado,
+          imagen: `../../img/plantas/${ramoEncontrado.imagen}`,
+          dificultad: ramoEncontrado.dificultad.toLowerCase()
+        };
+      }
+    }
+    
+    return null;
+  };
+
+  /**
+   * Muestra los detalles del ramo en la página
+   */
+  const mostrarDetalleRamo = (ramo) => {
+    if (!ramo) {
+      mostrarError('El ramo no encontrado.');
+      return;
+    }
+
+    productoActual = ramo;
+
+    // Actualizar imagen y título
+    document.getElementById('ramo-img').src = ramo.imagen;
+    document.getElementById('ramo-img').alt = ramo.nombre;
+    document.getElementById('ramo-nombre').textContent = ramo.nombre;
+
+    const descripcion = ramo.descripcion || ramo.nombre_cientifico || '[DEBUG] Descripcion generica (Ivan, tu q tienes mas mano para las palabras, pon algo mas adecuado aqui si quieres, pero en realidad es para debug, no deberai salir y seguramente se salga de la tarjeta).';
+    document.getElementById('ramo-descripcion').textContent = descripcion;
+
+    // Badges
+    const badgeDificultad = document.getElementById('ramo-badge-dificultad');
+    const badgeTemporada = document.getElementById('ramo-badge-temporada');
+    
+    badgeDificultad.className = `badge badge-dificultad ${ramo.dificultad}`;
+    badgeDificultad.textContent = ramo.dificultad.charAt(0).toUpperCase() + ramo.dificultad.slice(1);
+    
+    badgeTemporada.className = `badge badge-temporada ${ramo.temporada}`;
+    badgeTemporada.textContent = ramo.temporada.charAt(0).toUpperCase() + ramo.temporada.slice(1);
+
+    // Características
+    document.getElementById('ramo-temporada').textContent = capitalizar(ramo.temporada);
+    document.getElementById('ramo-dificultad').textContent = capitalizar(ramo.dificultad);
+    document.getElementById('ramo-precio').textContent = `€${parseFloat(ramo.precio).toFixed(2)}`;
+
+    // Botón añadir al carrito
+    const btnAddCart = document.getElementById('add-to-cart-btn');
+    btnAddCart.addEventListener('click', () => {
+      agregarAlCarrito(ramo);
+    });
+
+    // Actualizar título de la página
+    document.title = `${ramo.nombre} - Rincón Verde`;
+  };
+
+  /**
+   * Capitaliza la primera letra de un String
+   */
+  const capitalizar = (texto) => {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+  };
+
+  /**
+   * Obtiene ramos relacionados (misma temporada o dificultad)
+   */
+  const obtenerRamosRelacionados = (ramoActual, cantidad = 3) => {
+    return todosLosProductos
+      .filter(p => 
+        p.es_ramo === true && 
+        p.nombre !== ramoActual.nombre && 
+        (p.temporada === ramoActual.temporada || p.dificultad.toLowerCase() === ramoActual.dificultad.toLowerCase())
+      )
+      .map(p => ({
+        ...p,
+        imagen: `../../img/plantas/${p.imagen}`,
+        dificultad: p.dificultad.toLowerCase()
+      }))
+      .slice(0, cantidad);
+  };
+
+  /**
+   * Muestra los ramos relacionados en la cuadrícula
+   */
+  const mostrarRamosRelacionados = (ramos) => {
+    const grid = document.getElementById('ramos-relacionados-grid');
+    grid.innerHTML = '';
+
+    if (ramos.length === 0) {
+      grid.innerHTML = '<p class="sin-resultados">No hay otros ramos disponibles en este momento.</p>';
+      return;
+    }
+
+    ramos.forEach(ramo => {
+      const card = crearTarjetaProducto(ramo);
+      grid.appendChild(card);
+    });
+  };
+
+  /**
+   * Crea una tarjeta de producto HTML
+   */
+  const crearTarjetaProducto = (ramo) => {
+    const article = document.createElement('article');
+    article.className = 'producto-card';
+    article.setAttribute('data-es-ramo', 'true');
+    article.setAttribute('data-temporada', ramo.temporada);
+    article.setAttribute('data-dificultad', ramo.dificultad);
+    article.setAttribute('data-nombre', ramo.nombre);
+    article.setAttribute('data-precio', ramo.precio);
+
+    const imagenDiv = document.createElement('div');
+    imagenDiv.className = 'producto-imagen';
+
+    const badgeDif = document.createElement('span');
+    badgeDif.className = `badge badge-dificultad ${ramo.dificultad}`;
+    badgeDif.textContent = capitalizar(ramo.dificultad);
+
+    const badgeTem = document.createElement('span');
+    badgeTem.className = `badge badge-temporada ${ramo.temporada}`;
+    badgeTem.textContent = capitalizar(ramo.temporada);
+
+    const img = document.createElement('img');
+    img.src = ramo.imagen;
+    img.alt = ramo.nombre;
+
+    imagenDiv.appendChild(badgeDif);
+    imagenDiv.appendChild(badgeTem);
+    imagenDiv.appendChild(img);
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'producto-info';
+
+    const titulo = document.createElement('h3');
+    titulo.textContent = ramo.nombre;
+
+    const descripcion = document.createElement('p');
+    descripcion.className = 'nombre-cientifico';
+    descripcion.textContent = ramo.nombre_cientifico || 'Hermoso ramo';
+
+    const precio = document.createElement('p');
+    precio.className = 'precio';
+    precio.textContent = `€${parseFloat(ramo.precio).toFixed(2)}`;
+
+    const btn = document.createElement('button');
+    btn.className = 'add-to-cart';
+    btn.textContent = 'Añadir a la cesta';
+    btn.addEventListener('click', () => {
+      agregarAlCarrito(ramo);
+    });
+
+    infoDiv.appendChild(titulo);
+    infoDiv.appendChild(descripcion);
+    infoDiv.appendChild(precio);
+    infoDiv.appendChild(btn);
+
+    article.appendChild(imagenDiv);
+    article.appendChild(infoDiv);
+
+    return article;
+  };
+
+  /**
+   * Agrega un producto al carrito
+   */
+  const agregarAlCarrito = (ramo) => {
+    // Crear evento personalizado que el script del carrito puede detectar
+    const evento = new CustomEvent('producto-agregado', {
+      detail: {
+        nombre: ramo.nombre,
+        precio: ramo.precio,
+        imagen: ramo.imagen
+      }
+    });
+    window.dispatchEvent(evento);
+
+    // También intentar agregar directamente si el carrito está disponible
+    if (window.agregarAlCarrito) {
+      window.agregarAlCarrito(ramo);
+    }
+
+    // Mostrar confirmación
+    mostrarConfirmacion(`${ramo.nombre} agregado a la cesta`);
+  };
+
+  /**
+   * Muestra una confirmación al usuario
+   */
+  const mostrarConfirmacion = (mensaje) => {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    Swal.fire({
+      icon: 'success',
+      title: '¡Añadido!',
+      text: mensaje,
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      background: isDarkMode ? '#2d2d2d' : '#ffffff',
+      color: isDarkMode ? '#e8e8e8' : '#333333'
+    });
+  };
+
+  /**
+   * Muestra un mensaje de error
+   */
+  const mostrarError = (mensaje) => {
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    Swal.fire({
+      icon: 'error',
+      title: 'Error al cargar el ramo',
+      text: mensaje,
+      confirmButtonText: 'Volver a Ramos',
+      confirmButtonColor: isDarkMode ? '#a8d5a8' : '#2c662d',
+      background: isDarkMode ? '#2d2d2d' : '#ffffff',
+      color: isDarkMode ? '#e8e8e8' : '#333333'
+    }).then(() => {
+      window.location.href = '../ramos.html';
+    });
+  };
+
+  // Inicialización
+  todosLosProductos = await cargarProductos();
+
+  if (todosLosProductos.length > 0) {
+    const ramo = obtenerRamoActual();
+    if (ramo) {
+      mostrarDetalleRamo(ramo);
+      const relacionados = obtenerRamosRelacionados(ramo);
+      mostrarRamosRelacionados(relacionados);
+    } else {
+      mostrarError('El ramo solicitado no existe.');
+    }
+  }
+});

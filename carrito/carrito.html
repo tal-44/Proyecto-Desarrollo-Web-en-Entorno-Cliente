@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Carrito de Compras Rincón Verde</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../style.css">
   <style>
     /* Estilos simples para la tabla del carrito */
     .cart-table {
@@ -47,9 +47,9 @@
     <div class="header-main">
       <div class="logo">🌱 Rincón Verde</div>
       <nav class="nav-menu">
-        <a href="index.html" class="nav-link">Catálogo</a>
-        <a href="test.html" class="nav-link">Realiza un Test</a>
-        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="../index.html" class="nav-link">Catálogo</a>
+        <a href="../test/test.html" class="nav-link">Realiza un Test</a>
+        <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
       </nav>
       <div class="user-actions">
         <button id="open-cart" class="cart-button" aria-label="Ver carrito">
@@ -69,7 +69,7 @@
       <div id="cart-container"></div>
       <div class="cart-actions">
         <button id="vaciar-carrito" class="limpiar-btn">Vaciar carrito</button>
-        <a href="index.html">Seguir comprando</a>
+        <a href="../index.html">Seguir comprando</a>
       </div>
     </section>
   </main>
@@ -79,7 +79,7 @@
   </footer>
 
   <!-- Script del carrito: se encarga de leer localStorage y pintar la tabla -->
-  <script src="cart.js"></script>
+  <script src="../cart.js"></script>
   <script>
     // Al cargar esta página, renderizamos el resumen del carrito
     document.addEventListener('DOMContentLoaded', () => {

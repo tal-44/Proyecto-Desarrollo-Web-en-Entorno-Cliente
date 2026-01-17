@@ -5,39 +5,67 @@
  * necesario para practicar manipulación del DOM y eventos.
  */
 
+/* Variables CSS para tema claro y oscuro */
+:root {
+  --bg-primario: #ffffff;
+  --bg-secundario: #f5f5f5;
+  --colorTexto-primario: #333333;
+  --colorTexto-secundario: #555555;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --accent-color: #2c662d;
+  --accent-light: #8ab078;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --hover-bg: #e5f5e0;
+}
+
+body.dark-mode {
+  --bg-primario: #1e1e1e;
+  --bg-secundario: #2d2d2d;
+  --colorTexto-primario: #e8e8e8;
+  --colorTexto-secundario: #b0b0b0;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-color: #a8d5a8;
+  --accent-light: #6b9b6d;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --hover-bg: #3a4a3a;
+}
 /* Reset simple */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: var(--bg-secundario);
+    color: var(--colorTexto-primario);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Cabecera */
 .top-bar {
-  background-color: #8ab078;
+  background-color: var(--accent-light);
   color: #fff;
   padding: 0.5rem;
   text-align: center;
   font-size: 0.85rem;
+  transition: background-color 0.3s ease;
 }
 
 .header-main {
-  background-color: #ffffff;
+  background-color: var(--bg-primario);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   position: sticky;
   top: 0;
   z-index: 1000;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2c662d;
+  color: var(--accent-color);
+    transition: color 0.3s ease;
 }
 
 .nav-menu {
@@ -47,18 +75,18 @@ body {
 
 .nav-link {
   text-decoration: none;
-  color: #2c662d;
+  color: var(--accent-color);
   padding: 0.5rem 1rem;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
 
 .nav-link:hover {
-  background-color: #e5f5e0;
+  background-color: var(--hover-bg);
 }
 
 .cart-count {
-  background-color: #2c662d;
+  background-color: var(--accent-color);
   color: #fff;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
@@ -78,15 +106,16 @@ body {
 /* Panel de filtros */
 .filtros {
   width: 220px;
-  background-color: #ffffff;
+  background-color: var(--bg-primario);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .filtros h2 {
   margin-top: 0;
-  color: #2c662d;
+  color: var(--accent-color);
 }
 
 .filtro-grupo {
@@ -95,14 +124,15 @@ body {
 
 .filtro-toggle {
   width: 100%;
-  background-color: #e5f5e0;
+  background-color: var(--hover-bg);
   border: none;
   padding: 0.5rem;
   text-align: left;
   font-size: 1rem;
   border-radius: 4px;
   cursor: pointer;
-  color: #2c662d;
+  color: var(--accent-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .filtro-opciones {
@@ -118,18 +148,20 @@ body {
   display: block;
   width: 100%;
   padding: 0.4rem 0.5rem;
-  background-color: #f9f9f9;
+  background-color: var(--bg-secundario);
   border: none;
   cursor: pointer;
   border-radius: 4px;
   margin-bottom: 0.3rem;
   text-align: left;
   font-size: 0.9rem;
+  color: var(--colorTexto-primario);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .filtro-opcion.selected,
 .filtro-opcion:hover {
-  background-color: #d6eecf;
+  background-color: var(--hover-bg);
 }
 
 .limpiar-btn {
@@ -140,12 +172,21 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  }
+  
+  body.dark-mode .limpiar-btn {
+    background-color: #4a3535;
+    color: #e8e8e8;
 }
 
 .limpiar-btn:hover {
   background-color: #e9c8c8;
 }
 
+body.dark-mode .limpiar-btn:hover {
+  background-color: #5a4545;
+}
 /* Catálogo */
 .catalogo {
   flex: 1;
@@ -153,12 +194,12 @@ body {
 
 .catalogo-header h1 {
   margin: 0;
-  color: #2c662d;
+  color: var(--accent-color);
 }
 
 .catalogo-header p {
   margin: 0.5rem 0 1rem;
-  color: #555;
+  color: var(--colorTexto-secundario);
 }
 
 .productos-grid {
@@ -168,12 +209,13 @@ body {
 }
 
 .producto-card {
-  background-color: #ffffff;
+  background-color: var(--bg-primario);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .producto-imagen img {
@@ -188,13 +230,13 @@ body {
 
 .producto-info h3 {
   margin: 0 0 0.3rem;
-  color: #2c662d;
+  color: var(--accent-color);
   font-size: 1.1rem;
 }
 
 .producto-info p {
   margin: 0.2rem 0;
-  color: #555;
+  color: var(--colorTexto-secundario);
   font-size: 0.9rem;
 }
 
@@ -250,35 +292,36 @@ body {
   margin-top: 0.5rem;
   width: 100%;
   padding: 0.4rem;
-  background-color: #2c662d;
+  background-color: var(--accent-color);
   border: none;
   border-radius: 4px;
   color: #ffffff;
   cursor: pointer;
   font-size: 0.85rem;
+  transition: background-color 0.3s ease;
 }
 
 .add-to-cart:hover {
-  background-color: #24572b;
+  background-color: var(--accent-light);
 }
 
 /* Estilo del botón del carrito en la cabecera */
 .cart-button {
-  background-color: #e5f5e0;
+  background-color: var(--hover-bg);
   border: none;
   cursor: pointer;
   position: relative;
   font-size: 1.5rem;
-  color: #2c662d;
+  color: var(--accent-color);
   display: flex;
   align-items: center;
   padding: 0.25rem 0.4rem;
   border-radius: 4px;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .cart-button:hover {
-  background-color: #d6eecf;
+  background-color: var(--hover-bg);
 }
 
 /* Icono dentro del botón del carrito */
@@ -302,19 +345,26 @@ body {
 .sin-resultados {
   padding: 1rem;
   text-align: center;
-  background-color: #fff3f3;
+  background-color: var(--bg-primario);
   border-radius: 4px;
   color: #b00020;
   margin-top: 1rem;
+  border: 1px solid rgba(176, 0, 32, 0.2);
+  }
+  
+  body.dark-mode .sin-resultados {
+    background-color: #3a2a2a;
+    color: #ff6b6b;
 }
 
 /* Pie de página */
 .site-footer {
   text-align: center;
   padding: 1rem;
-  background-color: #f1f1f1;
-  color: #777;
+  background-color: var(--bg-secundario);
+    color: var(--colorTexto-secundario);
   margin-top: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* =============================================================
@@ -334,11 +384,12 @@ body {
   font-weight: bold;
   margin-bottom: 0.5rem;
   display: block;
-  color: #2c662d;
+  color: var(--accent-color);
 }
 
 .test-container label {
   display: block;
   margin-bottom: 0.5rem;
   cursor: pointer;
+  color: var(--colorTexto-primario);
 }

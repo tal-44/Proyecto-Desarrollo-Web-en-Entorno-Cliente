@@ -117,15 +117,35 @@ function addItemToCart(nombre, precio, imagen) {
 
 /**
  * Configura el botón del carrito en la cabecera. Al hacer clic,
- * redirecciona a la página "carrito.html". Si el elemento no
- * existe (por ejemplo en alguna página diferente), la función
- * simplemente no asigna ningún evento.
+ * redirecciona a la página "carrito.html". La ruta se calcula
+ * dinámicamente basada en la ubicación actual de la página.
  */
 function setupCartButton() {
   const cartButton = document.getElementById('open-cart');
   if (cartButton) {
     cartButton.addEventListener('click', () => {
-      window.location.href = 'carrito.html';
+      // Determinar la ruta correcta según la ubicación actual
+      const currentPath = window.location.pathname;
+      let carritoPath;
+      
+      if (currentPath.includes('/ramos/vista_ramo/')) {
+        // Desde ramos/vista_ramo/ -> subir 2 niveles
+        carritoPath = '../../carrito/carrito.html';
+      } else if (currentPath.includes('/ramos/')) {
+        // Desde ramos/ -> subir 1 nivel
+        carritoPath = '../carrito/carrito.html';
+      } else if (currentPath.includes('/test/')) {
+        // Desde test/ -> subir 1 nivel
+        carritoPath = '../carrito/carrito.html';
+      } else if (currentPath.includes('/carrito/')) {
+        // Ya estamos en carrito/
+        carritoPath = 'carrito.html';
+      } else {
+        // Desde la raíz (index.html)
+        carritoPath = 'carrito/carrito.html';
+      }
+      
+      window.location.href = carritoPath;
     });
   }
 }

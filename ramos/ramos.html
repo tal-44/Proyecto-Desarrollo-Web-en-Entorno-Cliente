@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramos Pre-hechos - Rincón Verde</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="ramos-dark.css">
+</head>
+<body>
+  <!-- Cabecera común -->
+  <header class="site-header">
+    <div class="top-bar">
+      Descubre nuestras plantas de temporada | Envío gratis en compras superiores a 50€
+    </div>
+    <div class="header-main">
+      <div class="logo">🌱 Rincón Verde</div>
+      <nav class="nav-menu">
+        <a href="../index.html" class="nav-link">Catálogo</a>
+        <a href="../test/test.html" class="nav-link">Realiza un Test</a>
+        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+      </nav>
+      <div class="user-actions">
+        <button id="open-cart" class="cart-button" aria-label="Ver carrito">
+          <span class="cart-icon">&#x1f6cd;</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Botón de toggle para modo oscuro -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    Modo Oscuro
+  </button>
+
+  <main class="site-main">
+    <section class="catalogo">
+      <header class="catalogo-header">
+        <h1>🌹Ramos Pre-hechos</h1>
+        <p>Descubre nuestros ramos especialmente diseñados para cada ocasión.</p>
+      </header>
+      <div class="productos-grid" id="productos-grid">
+        <!-- Los ramos se cargan desde product_data.json -->
+        <p class="cargando">Cargando ramos...</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <!-- Script para gestionar el carrito en todas las páginas -->
+  <script src="../cart.js"></script>
+  <!-- Script para gestionar el modo oscuro -->
+  <script src="ramos-dark.js"></script>
+  <!-- Script para la funcionalidad de ramos (click en tarjetas) -->
+  <script src="ramos.js"></script>
+</body>
+</html>

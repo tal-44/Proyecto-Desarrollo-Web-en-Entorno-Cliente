@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Ramo - Rincón Verde</title>
+  <link rel="stylesheet" href="../../style.css">
+  <link rel="stylesheet" href="../ramos-dark.css">
+  <link rel="stylesheet" href="vista-ramo.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+</head>
+<body>
+  <!-- Cabecera común -->
+  <header class="site-header">
+    <div class="top-bar">
+      Descubre nuestras plantas de temporada | Envío gratis en compras superiores a 50€
+    </div>
+    <div class="header-main">
+      <div class="logo">🌱 Rincón Verde</div>
+      <nav class="nav-menu">
+        <a href="../../index.html" class="nav-link">Catálogo</a>
+        <a href="../../test/test.html" class="nav-link">Realiza un Test</a>
+        <a href="../ramos.html" class="nav-link">Ramos Pre-hechos</a>
+      </nav>
+      <div class="user-actions">
+        <button id="open-cart" class="cart-button" aria-label="Ver carrito">
+          <span class="cart-icon">&#x1f6cd;</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Botón de toggle para modo oscuro -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    <span class="toggle-icon">🌙</span> Modo Oscuro
+  </button>
+
+  <main class="site-main vista-ramo-main">
+    <!-- Sección de detalle del ramo -->
+    <article class="ramo-detalle" id="ramo-detalle">
+      <div class="ramo-imagen">
+        <img id="ramo-img" src="" alt="Ramo" class="imagen-principal">
+        <div class="badges-container">
+          <span id="ramo-badge-dificultad" class="badge badge-dificultad"></span>
+          <span id="ramo-badge-temporada" class="badge badge-temporada"></span>
+        </div>
+      </div>
+
+      <div class="ramo-info">
+        <h1 id="ramo-nombre"></h1>
+        <p id="ramo-descripcion" class="descripcion"></p>
+        
+        <div class="ramo-caracteristicas">
+          <div class="caracteristica">
+            <span class="label">Temporada:</span>
+            <span id="ramo-temporada" class="valor"></span>
+          </div>
+          <div class="caracteristica">
+            <span class="label">Dificultad:</span>
+            <span id="ramo-dificultad" class="valor"></span>
+          </div>
+          <div class="caracteristica">
+            <span class="label">Precio:</span>
+            <span id="ramo-precio" class="valor precio"></span>
+          </div>
+        </div>
+
+        <button id="add-to-cart-btn" class="add-to-cart add-to-cart-detail">
+          Añadir a la cesta
+        </button>
+
+        <a href="../ramos.html" class="volver-btn">← Volver a Ramos</a>
+      </div>
+    </article>
+
+    <!-- Ramos relacionados -->
+    <section class="ramos-relacionados">
+      <h2>Otros Ramos que te Podrían Gustar</h2>
+      <div class="productos-grid" id="ramos-relacionados-grid">
+        <!-- Se llenará dinámicamente con JavaScript -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../../cart.js"></script>
+  <script src="../ramos-dark.js"></script>
+  <script src="vista-ramo-dark.js"></script>
+  <script src="vista-ramo.js"></script>
+</body>
+</html>
