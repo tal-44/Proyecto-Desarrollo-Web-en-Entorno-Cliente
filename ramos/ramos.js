@@ -97,6 +97,53 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.className = 'add-to-cart';
     btn.textContent = 'Añadir a la cesta';
 
+    // Event listener para añadir al carrito
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Evitar que se propague al click de la tarjeta
+
+      console.log('Click en botón añadir al carrito:', ramo.nombre);
+      console.log('window.addItemToCart está disponible:', typeof window.addItemToCart === 'function');
+
+      // Usar la función global de cart.js
+      if (typeof window.addItemToCart === 'function') {
+        console.log('Llamando a addItemToCart con:', {
+          nombre: ramo.nombre,
+          precio: ramo.precio,
+          imagen: `../img/plantas/${ramo.imagen}`
+        });
+        window.addItemToCart(ramo.nombre, ramo.precio, `../img/plantas/${ramo.imagen}`);
+        console.log('addItemToCart ejecutado correctamente');
+
+        // Mostrar confirmación con SweetAlert2
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        Swal.fire({
+          icon: 'success',
+          title: '¡Añadido!',
+          text: `${ramo.nombre} agregado a la cesta`,
+          toast: true,
+          position: 'bottom-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          background: isDarkMode ? '#2d2d2d' : '#ffffff',
+          color: isDarkMode ? '#e8e8e8' : '#333333'
+        });
+      } else {
+        console.error('ERROR: window.addItemToCart no está disponible');
+
+        // Mostrar error con SweetAlert2
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo añadir al carrito. Por favor, recarga la página.',
+          confirmButtonColor: isDarkMode ? '#a8d5a8' : '#2c662d',
+          background: isDarkMode ? '#2d2d2d' : '#ffffff',
+          color: isDarkMode ? '#e8e8e8' : '#333333'
+        });
+      }
+    });
+
     infoDiv.appendChild(titulo);
     infoDiv.appendChild(descripcion);
     infoDiv.appendChild(precio);

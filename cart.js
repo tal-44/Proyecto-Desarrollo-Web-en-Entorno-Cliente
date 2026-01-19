@@ -234,5 +234,7 @@ function renderCartPage() {
 }
 
 // Hacemos que las funciones principales estén disponibles en el
-// objeto global para poder ser llamadas desde HTML (carrito.html)
+// objeto global para poder ser llamadas desde HTML (carrito.html) y desde scripts dinámicos
 window.renderCartPage = renderCartPage;
+window.addItemToCart = addItemToCart;
+window.updateCartCount = updateCartCount;

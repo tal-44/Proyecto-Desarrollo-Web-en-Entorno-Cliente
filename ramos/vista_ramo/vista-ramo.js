@@ -159,6 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     article.setAttribute('data-dificultad', ramo.dificultad);
     article.setAttribute('data-nombre', ramo.nombre);
     article.setAttribute('data-precio', ramo.precio);
+    article.style.cursor = 'pointer';
 
     const imagenDiv = document.createElement('div');
     imagenDiv.className = 'producto-imagen';
@@ -195,10 +196,44 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const btn = document.createElement('button');
     btn.className = 'add-to-cart';
+    btn.setAttribute('type', 'button'); // Asegurar que no sea submit
     btn.textContent = 'Añadir a la cesta';
-    btn.addEventListener('click', () => {
-      agregarAlCarrito(ramo);
-    });
+
+    // Event listener para añadir al carrito
+    btn.addEventListener('click', function (e) {
+      // Detener propagación Y prevenir default
+      e.stopPropagation();
+      e.preventDefault();
+      e.stopImmediatePropagation(); // También detener otros listeners en el mismo elemento
+
+      console.log('=== CLICK BOTÓN RELACIONADO ===');
+      console.log('Producto:', ramo.nombre);
+
+      // Usar la función de cart.js directamente
+      if (typeof window.addItemToCart === 'function') {
+        window.addItemToCart(ramo.nombre, ramo.precio, ramo.imagen);
+        console.log('Producto añadido al carrito');
+
+        // Mostrar confirmación con SweetAlert2
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        Swal.fire({
+          icon: 'success',
+          title: '¡Añadido!',
+          text: `${ramo.nombre} agregado a la cesta`,
+          toast: true,
+          position: 'bottom-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          background: isDarkMode ? '#2d2d2d' : '#ffffff',
+          color: isDarkMode ? '#e8e8e8' : '#333333'
+        });
+      } else {
+        console.error('ERROR: window.addItemToCart no está disponible');
+      }
+
+      return false;
+    }, true);
 
     infoDiv.appendChild(titulo);
     infoDiv.appendChild(descripcion);
@@ -208,6 +243,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     article.appendChild(imagenDiv);
     article.appendChild(infoDiv);
 
+    // Event listener para hacer click en la tarjeta (navegación)
+    article.addEventListener('click', function (e) {
+      console.log('=== CLICK EN TARJETA ===');
+      console.log('e.target:', e.target.tagName, e.target.className);
+
+      // Varias verificacones pues hasy que asegurarse de que se este clickando el boton
+      const esBoton = e.target.classList.contains('add-to-cart');
+      const esDentroBoton = e.target.closest('.add-to-cart') !== null;
+      const esElementoButton = e.target.tagName === 'BUTTON';
+
+      console.log('esBoton:', esBoton, 'esDentroBoton:', esDentroBoton, 'esElementoButton:', esElementoButton);
+
+      if (esBoton || esDentroBoton || esElementoButton) {
+        console.log('Click en botón detectado - NO navegar');
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+      }
+
+      console.log('Click en tarjeta - navegando a:', ramo.nombre);
+
+      // Preparar datos del ramo para recargar la vista
+      const ramoData = {
+        nombre: ramo.nombre,
+        precio: ramo.precio,
+        imagen: ramo.imagen,
+        temporada: ramo.temporada,
+        dificultad: ramo.dificultad,
+        es_ramo: true,
+        nombre_cientifico: ramo.nombre_cientifico || '',
+        descripcion: ramo.descripcion || ''
+      };
+
+      // Guardar en sessionStorage
+      sessionStorage.setItem('ramoActual', JSON.stringify(ramoData));
+
+      // Recargar la página con el nuevo ramo
+      const nombreEncoded = encodeURIComponent(ramo.nombre);
+      window.location.href = `vista_ramo.html?nombre=${nombreEncoded}`;
+    });
+
     return article;
   };
 
@@ -215,23 +291,15 @@ document.addEventListener('DOMContentLoaded', async () => {
    * Agrega un producto al carrito
    */
   const agregarAlCarrito = (ramo) => {
-    // Crear evento personalizado que el script del carrito puede detectar
-    const evento = new CustomEvent('producto-agregado', {
-      detail: {
-        nombre: ramo.nombre,
-        precio: ramo.precio,
-        imagen: ramo.imagen
-      }
-    });
-    window.dispatchEvent(evento);
-
-    // También intentar agregar directamente si el carrito está disponible
-    if (window.agregarAlCarrito) {
-      window.agregarAlCarrito(ramo);
+    // Usar la función global de cart.js
+    if (typeof window.addItemToCart === 'function') {
+      window.addItemToCart(ramo.nombre, ramo.precio, ramo.imagen);
+      // Mostrar confirmación
+      mostrarConfirmacion(`${ramo.nombre} agregado a la cesta`);
+    } else {
+      console.error('La función addItemToCart no está disponible');
+      mostrarError('Error al añadir el ramo a la cesta');
     }
-
-    // Mostrar confirmación
-    mostrarConfirmacion(`${ramo.nombre} agregado a la cesta`);
   };
 
   /**
@@ -244,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       title: '¡Añadido!',
       text: mensaje,
       toast: true,
-      position: 'top-end',
+      position: 'bottom-end',
       showConfirmButton: false,
       timer: 3000,
       timerProgressBar: true,
