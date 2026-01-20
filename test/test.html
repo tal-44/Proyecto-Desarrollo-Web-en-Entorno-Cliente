@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Realiza un Test - Rincón Verde</title>
   <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="test.css">
+  <link rel="stylesheet" href="test-dark.css">
+  <!-- SweetAlert2 para notificaciones -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
   <!-- Cabecera reutilizada del catálogo -->
@@ -16,7 +20,7 @@
       <div class="logo">🌱 Rincón Verde</div>
       <nav class="nav-menu">
         <a href="../index.html" class="nav-link">Catálogo</a>
-        <a href="test.html" class="nav-link">Realiza un Test</a>
+        <a href="test.html" class="nav-link active">Realiza un Test</a>
         <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
       </nav>
       <div class="user-actions">
@@ -28,41 +32,195 @@
     </div>
   </header>
 
+  <!-- Botón de toggle para modo oscuro -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    Modo Oscuro
+  </button>
+
   <main class="site-main">
-    <section class="catalogo">
+    <section class="catalogo test-section">
       <!-- Encabezado del test -->
-      <header class="catalogo-header">
-        <h1>🧪 Encuentra tu planta ideal</h1>
+      <header class="catalogo-header test-header">
+        <h1>Encuentra tu planta ideal</h1>
         <p>Responde algunas preguntas y te recomendaremos la planta perfecta para ti.</p>
       </header>
+
       <div class="test-container">
-        <!-- Formulario del test -->
+        <!-- Indicador de progreso -->
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span class="progress-text" id="progress-text">Pregunta 1 de 4</span>
+        </div>
+        
+        <!-- Formulario del test (Contenido reciclado del test hecho por Ivan)-->
         <form id="form-test" class="test-form">
-          <fieldset>
+          <!-- Pregunta 1: Luz -->
+          <fieldset class="pregunta-fieldset active" data-pregunta="1">
             <legend>❓ Pregunta 1: ¿Cuánta luz natural recibe tu hogar?</legend>
-            <label><input type="radio" name="luz" value="mucha" required> ☀️ Mucha luz directa</label>
-            <label><input type="radio" name="luz" value="media" required> 🌤️ Luz media</label>
-            <label><input type="radio" name="luz" value="poca" required> 🌙 Poca luz</label>
+            <div class="opciones-container">
+              <label class="opcion-label">
+                <input type="radio" name="luz" value="mucha" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">☀️</span>
+                  <span class="opcion-texto">Mucha luz directa</span>
+                  <span class="opcion-descripcion">Ventanas grandes orientadas al sur</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="luz" value="media" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">🌤️</span>
+                  <span class="opcion-texto">Luz media</span>
+                  <span class="opcion-descripcion">Luz indirecta o filtrada</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="luz" value="poca" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">🌙</span>
+                  <span class="opcion-texto">Poca luz</span>
+                  <span class="opcion-descripcion">Espacios interiores con poca iluminación</span>
+                </span>
+              </label>
+            </div>
           </fieldset>
-          <fieldset>
+<!-- Pregunta 2: Tiempo -->
+<fieldset class="pregunta-fieldset" data-pregunta="2">
             <legend>❓ Pregunta 2: ¿Tienes tiempo para cuidar plantas?</legend>
-            <label><input type="radio" name="tiempo" value="mucho" required> ✋ Sí, diariamente</label>
-            <label><input type="radio" name="tiempo" value="poco" required> 🏃 No, tengo poco tiempo</label>
+            <div class="opciones-container">
+              <label class="opcion-label">
+                <input type="radio" name="tiempo" value="mucho" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">🌿</span>
+                  <span class="opcion-texto">Sí, diariamente</span>
+                  <span class="opcion-descripcion">Puedo dedicar tiempo cada día</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="tiempo" value="medio" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">⏰</span>
+                  <span class="opcion-texto">Tiempo moderado</span>
+                  <span class="opcion-descripcion">Algunos días a la semana</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="tiempo" value="poco" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">🏃</span>
+                  <span class="opcion-texto">Poco tiempo</span>
+                  <span class="opcion-descripcion">Apenas puedo dedicarles atención</span>
+                </span>
+              </label>
+            </div>
           </fieldset>
-          <fieldset>
+<!-- Pregunta 3: Presupuesto -->
+<fieldset class="pregunta-fieldset" data-pregunta="3">
             <legend>❓ Pregunta 3: ¿Cuál es tu presupuesto?</legend>
-            <label><input type="radio" name="presupuesto" value="bajo" required> 💰 Bajo (&lt; €20)</label>
-            <label><input type="radio" name="presupuesto" value="medio" required> 💵 Medio (€20-50)</label>
-            <label><input type="radio" name="presupuesto" value="alto" required> 💸 Alto (&gt; €50)</label>
+            <div class="opciones-container">
+              <label class="opcion-label">
+                <input type="radio" name="presupuesto" value="bajo" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">💰</span>
+                  <span class="opcion-texto">Económico</span>
+                  <span class="opcion-descripcion">Menos de €20</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="presupuesto" value="medio" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">💵</span>
+                  <span class="opcion-texto">Moderado</span>
+                  <span class="opcion-descripcion">Entre €20 y €50</span>
+                </span>
+              </label>
+              <label class="opcion-label">
+                <input type="radio" name="presupuesto" value="alto" required>
+                <span class="opcion-content">
+                  <span class="opcion-emoji">💎</span>
+                  <span class="opcion-texto">Sin límite</span>
+                  <span class="opcion-descripcion">Más de €50</span>
+                </span>
+              </label>
+            </div>
+            </fieldset>
+            
+            <!-- Pregunta 4: Espacio -->
+            <fieldset class="pregunta-fieldset" data-pregunta="4">
+              <legend>❓ Pregunta 4: ¿Qué tipo de espacio tienes?</legend>
+              <div class="opciones-container">
+                <label class="opcion-label">
+                  <input type="radio" name="espacio" value="pequeno" required>
+                  <span class="opcion-content">
+                    <span class="opcion-emoji">🏠</span>
+                    <span class="opcion-texto">Espacio pequeño</span>
+                    <span class="opcion-descripcion">Escritorio, estantería o balcón</span>
+                  </span>
+                </label>
+                <label class="opcion-label">
+                  <input type="radio" name="espacio" value="mediano" required>
+                  <span class="opcion-content">
+                    <span class="opcion-emoji">🏡</span>
+                    <span class="opcion-texto">Espacio mediano</span>
+                    <span class="opcion-descripcion">Salón o habitación</span>
+                  </span>
+                </label>
+                <label class="opcion-label">
+                  <input type="radio" name="espacio" value="grande" required>
+                  <span class="opcion-content">
+                    <span class="opcion-emoji">🏢</span>
+                    <span class="opcion-texto">Espacio grande</span>
+                    <span class="opcion-descripcion">Jardín o patio amplio</span>
+                  </span>
+                </label>
+              </div>
           </fieldset>
-          <button type="submit" class="limpiar-btn">Ver mi recomendación 🎯</button>
+<!-- Botones de navegación -->
+<div class="test-navigation">
+  <button type="button" id="btn-anterior" class="nav-btn btn-anterior" disabled>
+    ← Anterior
+  </button>
+  <button type="button" id="btn-siguiente" class="nav-btn btn-siguiente">
+    Siguiente →
+  </button>
+  <button type="submit" id="btn-resultado" class="nav-btn btn-resultado" style="display: none;">
+    Ver mi recomendación 🎯
+  </button>
+</div>
         </form>
 
-        <!-- Resultado del test -->
-        <div id="resultado-test" class="sin-resultados" style="display:none;">
-          <h2>🎉 Tu recomendación:</h2>
-          <p id="recomendacion-texto"></p>
-          <button id="volver-test" class="limpiar-btn">Volver al test</button>
+        <!-- Resultado del test (Se añade con JS) -->
+        <div id="resultado-test" class="resultado-container" style="display: none;">
+          <div class="resultado-header">
+            <h2>🎉 Tu planta ideal es...</h2>
+          </div>
+          <div class="resultado-card">
+            <div class="resultado-imagen">
+              <img id="resultado-img" src="" alt="Planta recomendada">
+            </div>
+            <div class="resultado-info">
+              <h3 id="resultado-nombre"></h3>
+              <p id="resultado-cientifico" class="nombre-cientifico"></p>
+              <p id="resultado-descripcion" class="resultado-descripcion"></p>
+              <div class="resultado-detalles">
+                <span class="detalle-item" id="resultado-dificultad"></span>
+                <span class="detalle-item" id="resultado-precio"></span>
+              </div>
+              <button id="add-recomendacion" class="add-to-cart btn-grande">
+                Añadir a la cesta 🛒
+              </button>
+            </div>
+          </div>
+          <div class="resultado-acciones">
+            <button id="volver-test" class="limpiar-btn">
+              🔄 Volver a hacer el test
+            </button>
+            <a href="../index.html" class="btn-catalogo">
+              📚 Ver catálogo completo
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -72,8 +230,10 @@
     <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
   </footer>
 
-  <script src="test.js"></script>
-  <!-- Script de carrito: gestiona la lógica del carrito en todas las páginas -->
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="../cart.js"></script>
+  <script src="test-dark.js"></script>
+  <script src="test.js"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  const DARK_MODE_KEY = 'ramos-dark-mode';
+  const DARK_MODE_KEY = 'dark-mode';
   
   /**
    * Recupera el estado del modo oscuro desde localStorage o preferencia del sistema
