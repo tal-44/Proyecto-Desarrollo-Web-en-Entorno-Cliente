@@ -297,10 +297,37 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Hacemos que toda la tarjeta de producto sea clicable para ir a la vista
    * detallada. Si el usuario hace clic en el botón "Añadir a la cesta",
-   * no redireccionamos.
+   * agregamos el producto al carrito.
    */
   function asignarEventosTarjetas() {
     document.querySelectorAll('.producto-card').forEach(card => {
+      // Agregar evento al botón de "Añadir a la cesta"
+      const addCartBtn = card.querySelector('.add-to-cart');
+      if (addCartBtn) {
+        addCartBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const nombre = card.dataset.nombre;
+          const producto = todosLosProductos.find(p => p.nombre === nombre);
+          if (producto && typeof window.addItemToCart === 'function') {
+            window.addItemToCart(producto.nombre, producto.precio, `img/plantas/${producto.imagen}`);
+            // Mostrar notificación de confirmación
+            Swal.fire({
+              icon: 'success',
+              title: '¡Añadido!',
+              text: `${producto.nombre} ha sido añadido a la cesta.`,
+              toast: true,
+              position: 'bottom-end',
+              timer: 2000,
+              showConfirmButton: false,
+              background: document.body.classList.contains('dark-mode') ? '#2d2d2d' : '#ffffff',
+              color: document.body.classList.contains('dark-mode') ? '#e8e8e8' : '#333333'
+            });
+          }
+        });
+      }
+      
+      // Click en la tarjeta para ir al detalle
       card.addEventListener('click', (e) => {
         // Si el clic proviene del botón de añadir al carrito, no hacemos nada
         if (e.target.closest('.add-to-cart')) return;

@@ -50,7 +50,15 @@
     .error-message {
       color: #d9534f;
       font-size: 0.85rem;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 4px;
+      display: none;
+    }
+    .error-message[style*="display: block"] {
+      display: block !important;
     }
     .auth-links {
       margin-top: 1rem;
@@ -73,8 +81,8 @@
       <div class="logo">🌱 Rincón Verde</div>
       <nav class="nav-menu">
         <a href="index.html" class="nav-link">Catálogo</a>
-        <a href="test.html" class="nav-link">Realiza un Test</a>
-        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="test/test.html" class="nav-link">Realiza un Test</a>
+        <a href="ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
       </nav>
       <div class="user-actions">
         <div id="user-info" class="user-info"></div>
@@ -93,7 +101,7 @@
   <main>
     <div class="auth-container">
       <h1>Crear una cuenta</h1>
-      <p id="register-error" class="error-message" style="display:none;"></p>
+      <p id="register-error" class="error-message"></p>
       <form id="register-form">
         <label for="reg-username">Usuario</label>
         <input type="text" id="reg-username" required minlength="3" placeholder="Introduce un nombre de usuario">

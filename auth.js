@@ -55,9 +55,17 @@ function handleRegister(e) {
   const passwordInput = document.getElementById('reg-password');
   const confirmInput = document.getElementById('reg-confirm');
   const errorP = document.getElementById('register-error');
+  
+  // Limpiar mensaje de error anterior
+  if (errorP) {
+    errorP.textContent = '';
+    errorP.style.display = 'none';
+  }
+  
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
   const confirm = confirmInput.value;
+  
   // Validaciones básicas
   if (username.length < 3) {
     showError(errorP, 'El nombre de usuario debe tener al menos 3 caracteres.');
@@ -82,6 +90,7 @@ function handleRegister(e) {
   const newUser = { username, password };
   users.push(newUser);
   saveUsers(users);
+  console.log('Nuevo usuario registrado:', username);
   // Establecemos al nuevo usuario como el usuario actual
   localStorage.setItem('currentUser', JSON.stringify(newUser));
   // Limpiamos los campos del formulario
@@ -103,16 +112,38 @@ function handleLogin(e) {
   const usernameInput = document.getElementById('login-username');
   const passwordInput = document.getElementById('login-password');
   const errorP = document.getElementById('login-error');
+  
+  // Limpiar mensaje de error anterior
+  if (errorP) {
+    errorP.textContent = '';
+    errorP.style.display = 'none';
+  }
+  
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
+  
+  // Validar que los campos no estén vacíos
+  if (!username || !password) {
+    showError(errorP, 'Por favor, completa todos los campos.');
+    return;
+  }
+  
   const users = loadUsers();
   const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (!user || user.password !== password) {
-    showError(errorP, 'Usuario o contraseña incorrectos.');
+  
+  if (!user) {
+    showError(errorP, 'El usuario no existe. Por favor, regístrate primero.');
+    console.log('Usuario no encontrado:', username);
+    return;
+  }
+  if (user.password !== password) {
+    showError(errorP, 'Contraseña incorrecta.');
+    console.log('Contraseña incorrecta para usuario:', username);
     return;
   }
   // Credenciales correctas: almacenamos el usuario actual
   localStorage.setItem('currentUser', JSON.stringify(user));
+  console.log('Login exitoso para usuario:', username);
   // Limpiamos los campos
   usernameInput.value = '';
   passwordInput.value = '';
@@ -126,7 +157,11 @@ function handleLogin(e) {
  * @param {string} message Texto del error
  */
 function showError(element, message) {
-  if (!element) return;
+  if (!element) {
+    console.warn('Elemento de error no encontrado');
+    return;
+  }
   element.textContent = message;
   element.style.display = 'block';
+  console.log('Error mostrado:', message);
 }

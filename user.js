@@ -44,9 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   } else {
     // Si no hay usuario, mostramos enlaces de iniciar sesión y registrarse
+    // Detectamos si estamos en un subdirectorio para ajustar las rutas
+    const currentPath = window.location.pathname;
+    const isInSubdirectory = currentPath.includes('/test/') || currentPath.includes('/ramos/');
+    const loginPath = isInSubdirectory ? '../login.html' : 'login.html';
+    const registerPath = isInSubdirectory ? '../register.html' : 'register.html';
+    
     userInfoDiv.innerHTML = `
-      <a href="login.html" class="auth-link">Iniciar sesión</a>
-      <a href="register.html" class="auth-link">Registrarse</a>
+      <a href="${loginPath}" class="auth-link">Iniciar sesión</a>
+      <a href="${registerPath}" class="auth-link">Registrarse</a>
     `;
   }
 });
