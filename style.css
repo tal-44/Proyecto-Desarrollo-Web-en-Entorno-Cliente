@@ -415,16 +415,19 @@ a {
 .limpiar-btn {
   width: 100%;
   padding: 0.5rem;
-  background-color: var(--error-color);
-  color: #fff;
-  border: none;
+  background-color: var(--bg-secundario);
+  color: var(--colorTexto-primario);
+  border: 2px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
   margin-top: 1rem;
+  transition: all 0.3s ease;
 }
 
 .limpiar-btn:hover {
-  background-color: darken(var(--error-color), 10%);
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-light);
 }
 
 /*
@@ -444,9 +447,10 @@ a {
   width: 100%;
 }
 
-/*
- * Dark mode toggle button
- */
+/* =============================================================
+ * Botón Toggle del Modo Oscuro
+ * ============================================================= */
+
 .dark-mode-toggle {
   position: fixed;
   top: 120px;

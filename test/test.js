@@ -8,12 +8,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // =============================================================
     // Elementos del DOM
     // ============================================================= 
-  const form = document.getElementById('form-test');
+    const form = document.getElementById('form-test');
     const resultadoContainer = document.getElementById('resultado-test');
     const btnAnterior = document.getElementById('btn-anterior');
     const btnSiguiente = document.getElementById('btn-siguiente');
     const btnResultado = document.getElementById('btn-resultado');
-  const btnVolver = document.getElementById('volver-test');
+    const btnVolver = document.getElementById('volver-test');
     const btnAddRecomendacion = document.getElementById('add-recomendacion');
     const progressFill = document.getElementById('progress-fill');
     const progressText = document.getElementById('progress-text');
