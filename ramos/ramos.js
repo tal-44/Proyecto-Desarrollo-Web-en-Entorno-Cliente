@@ -58,12 +58,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const imagenDiv = document.createElement('div');
     imagenDiv.className = 'producto-imagen';
 
-    // Badge de dificultad
-    const badgeDif = document.createElement('span');
-    const dificultadLower = ramo.dificultad.toLowerCase();
-    badgeDif.className = `badge badge-dificultad ${dificultadLower}`;
-    badgeDif.textContent = capitalizar(ramo.dificultad);
-
     // Badge de temporada
     const badgeTem = document.createElement('span');
     badgeTem.className = `badge badge-temporada ${ramo.temporada}`;
@@ -74,7 +68,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     img.src = `../img/plantas/${ramo.imagen}`;
     img.alt = ramo.nombre;
 
-    imagenDiv.appendChild(badgeDif);
     imagenDiv.appendChild(badgeTem);
     imagenDiv.appendChild(img);
 

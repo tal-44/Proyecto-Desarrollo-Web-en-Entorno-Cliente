@@ -81,12 +81,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('ramo-descripcion').textContent = descripcion;
 
     // Badges
-    const badgeDificultad = document.getElementById('ramo-badge-dificultad');
     const badgeTemporada = document.getElementById('ramo-badge-temporada');
-    
-    badgeDificultad.className = `badge badge-dificultad ${ramo.dificultad}`;
-    badgeDificultad.textContent = ramo.dificultad.charAt(0).toUpperCase() + ramo.dificultad.slice(1);
-    
+
     badgeTemporada.className = `badge badge-temporada ${ramo.temporada}`;
     badgeTemporada.textContent = ramo.temporada.charAt(0).toUpperCase() + ramo.temporada.slice(1);
 
@@ -165,8 +161,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     imagenDiv.className = 'producto-imagen';
 
     const badgeDif = document.createElement('span');
-    badgeDif.className = `badge badge-dificultad ${ramo.dificultad}`;
-    badgeDif.textContent = capitalizar(ramo.dificultad);
 
     const badgeTem = document.createElement('span');
     badgeTem.className = `badge badge-temporada ${ramo.temporada}`;
