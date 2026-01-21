@@ -16,7 +16,7 @@
 
 .dark-mode-toggle {
   position: fixed;
-  top: 180px;
+  top: 120px;
   right: 20px;
   z-index: 999;
   background-color: var(--bg-primario);
