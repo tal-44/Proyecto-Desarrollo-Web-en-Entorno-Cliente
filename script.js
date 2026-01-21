@@ -1,9 +1,38 @@
 /*
  * script.js
- * Este archivo implementa la lógica básica de interacción para el Hito 1.
- * Carga todos los productos desde product_data.json, los renderiza en el catálogo,
- * y controla la apertura/cierre de menús desplegables de filtros,
- * selección de opciones y filtrado de productos según criterios elegidos.
+ *
+ * CATÁLOGO DE PRODUCTOS - Lógica principal de index.html
+ * 
+ * Este script implementa la funcionalidad completa del catálogo de productos:
+ * 
+ * FUNCIONALIDAD PRINCIPAL:
+ * 1. CARGA: Lee todos los productos desde product_data.json
+ * 2. RENDERIZADO: Crea dinámicamente tarjetas de producto en el grid
+ * 3. FILTRADO: Implementa sistema de filtros por:
+ *    - Ramos pre-hechos vs plantas individuales
+ *    - Temporada (primavera, verano, otoño, invierno, todo año)
+ *    - Dificultad (fácil, media, difícil)
+ *    - Búsqueda por nombre (buscador de texto)
+ * 4. CARRITO: Integración con cart.js para añadir productos
+ * 5. NAVEGACIÓN: Al hacer clic en una tarjeta, va a la página de detalle (product.html)
+ * 
+ * ESTRUCTURA:
+ * - Barra lateral con grupos de filtros expandibles
+ * - Grid de productos con tarjetas dinámicas
+ * - Buscador de texto integrado
+ * - Contador de resultados
+ * 
+ * ALMACENAMIENTO:
+ * - sessionStorage['productoActual']: datos del producto seleccionado (para product.html)
+ * - localStorage['cart']: carrito de compras (gestionado por cart.js)
+ * 
+ * EVENTOS:
+ * - Filtro-toggle: expandir/contraer grupos de filtros
+ * - Filtro-opcion: seleccionar un valor de filtro y aplicarlo
+ * - Botón limpiar: resetear todos los filtros
+ * - Buscador (input): filtrar en tiempo real por nombre
+ * - Botón añadir carrito: llamar a window.addItemToCart()
+ * - Click tarjeta: navegar a página de detalle
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -15,8 +44,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   let todosLosProductos = [];
 
   /**
-   * Obtiene la ruta de imagen correcta.
-   * Verifica si la imagen existe, si no usa default.jpg
+   * OBTENER RUTA DE IMAGEN VERIFICADA
+   * Verifica si la imagen de un producto existe. Si no existe, retorna default.jpg
+   * 
+   * PROCESO:
+   * 1. Si imagen está vacía: retorna directamente 'img/plantas/default.jpg'
+   * 2. Si la imagen no comienza con 'img/': añade prefijo 'img/plantas/'
+   * 3. Crea una imagen temporal y verifica si carga (img.onload/img.onerror)
+   * 4. Retorna la ruta verificada o default.jpg si falla
+   * 
+   * IMPORTANCIA:
+   * - Previene errores de imágenes rotas en el catálogo
+   * - Asegura que todas las imágenes enviadas al carrito existan
+   * - Se usa en renderizarProductos() para mostrar las tarjetas
+   * - Se usa en asignarEventosTarjetas() al añadir al carrito
+   * 
+   * @param {string} imagen Nombre o ruta relativa de la imagen
+   * @returns {Promise<string>} Promesa que resuelve a la ruta verificada
    */
   function obtenerImagenRuta(imagen) {
     if (!imagen) return 'img/plantas/default.jpg';
@@ -31,7 +75,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Carga todos los productos desde product_data.json
+   * CARGAR PRODUCTOS DESDE JSON
+   * Realiza una petición HTTP (fetch) para obtener todos los productos
+   * 
+   * FUENTE: product_data.json (archivo estático en la raíz)
+   * ESTRUCTURA JSON: { productos: [ { nombre, precio, imagen, temporada, dificultad, ... }, ... ] }
+   * 
+   * ALMACENAMIENTO:
+   * - Los datos se guardan en la variable local todosLosProductos
+   * - Se mantienen en memoria durante toda la sesión de usuario
+   * - Se reutilizan para filtrado y renderizado sin hacer nuevas peticiones
+   * 
+   * ERROR HANDLING:
+   * - Si la petición falla: captura el error, lo registra en consola
+   * - Establece todosLosProductos = [] para evitar errores posteriores
+   * 
+   * Se ejecuta una única vez al cargar la página (en la inicialización)
    */
   async function cargarProductos() {
     try {
@@ -46,7 +105,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Renderiza los productos en el grid del catálogo
+   * RENDERIZAR PRODUCTOS EN GRID
+   * Crea dinámicamente las tarjetas HTML de productos en el catálogo
+   * 
+   * PROCESO:
+   * 1. Limpia el grid anterior (grid.innerHTML = '')
+   * 2. Para cada producto:
+   *    - Obtiene la ruta de imagen verificada (puede ser default.jpg)
+   *    - Crea un elemento <article> con clase 'producto-card'
+   *    - Establece atributos data-* para filtrado:
+   *      * data-ramos: 'si' o 'no'
+   *      * data-temporada: 'verano', 'invierno', etc.
+   *      * data-dificultad: 'facil', 'media', 'dificil'
+   *      * data-nombre: nombre del producto (para búsqueda)
+   *    - Inserta HTML con imagen, nombre, precio y botón
+   * 3. Añade la tarjeta al DOM
+   * 4. Una vez renderizadas todas: llama a asignarEventosTarjetas()
+   * 
+   * @param {Array} productos Array de productos a renderizar
    */
   async function renderizarProductos(productos) {
     const grid = document.getElementById('productos-grid');
@@ -90,7 +166,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Capitaliza la primera letra de una cadena
+   * UTILIDAD: Capitalizar texto
+   * Convierte el primer carácter a mayúscula y el resto a minúscula
+   * Ejemplo: 'VERANO' -> 'Verano', 'facil' -> 'Facil'
+   * 
+   * @param {string} texto Texto a capitalizar
+   * @returns {string} Texto capitalizado
    */
   function capitalizar(texto) {
     if (!texto) return '';
@@ -112,11 +193,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Objeto que almacena el estado actual de los filtros. Cada propiedad
-   * corresponde a un grupo de filtros (ramos, temporada o dificultad)
-   * y su valor indica la opción seleccionada. Los valores iniciales
-   * representan la ausencia de filtro (por ejemplo, 'todos' significa
-   * que mostramos tanto ramos como plantas).
+   * OBJETO DE ESTADO DE FILTROS
+   * Almacena el estado actual de los filtros seleccionados
+   * 
+   * PROPIEDADES:
+   * - ramos: 'todos' (ambos) | 'si' (solo ramos) | 'no' (solo plantas)
+   * - temporada: 'todas' (sin filtro) | 'primavera', 'verano', 'otoño', 'invierno'
+   * - dificultad: 'todas' (sin filtro) | 'facil', 'media', 'dificil'
+   * 
+   * CAMBIOS:
+   * - Se actualiza cuando el usuario selecciona opciones en los filtros
+   * - Cada cambio dispara filtrarProductos() para mostrar/ocultar tarjetas
+   * 
+   * INICIAL: Todos los valores están en modo "sin filtro" (mostrar todo)
    */
   const filtros = {
     ramos: 'todos',       // valores posibles: 'todos', 'si', 'no'
@@ -240,7 +329,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
-   * Muestra u oculta las tarjetas de producto según los filtros activos.
+   * APLICAR FILTROS Y MOSTRAR/OCULTAR TARJETAS
+   * Itera todas las tarjetas y las muestra/oculta según los filtros activos
+   * 
+   * LÓGICA DE FILTRADO:
+   * Una tarjeta se MUESTRA solo si cumple TODOS estos criterios:
+   * 1. Ramos: si filtro !== 'todos' y data-ramos !== filtro -> OCULTAR
+   * 2. Temporada: si filtro !== 'todas' y data-temporada !== filtro y !== 'todo_año' -> OCULTAR
+   * 3. Dificultad: si filtro !== 'todas' y data-dificultad !== filtro -> OCULTAR
+   * 4. Búsqueda: si hay texto en search-input, comprueba que el nombre lo contenga
+   * 
+   * VISUALIZACIÓN:
+   * - Tarjeta cumple filtros: card.style.display = '' (muestra con CSS default)
+   * - Tarjeta no cumple: card.style.display = 'none' (oculta)
+   * 
+   * MENSAJES:
+   * - Si visibles === 0: muestra elemento #sin-resultados
+   * - Si visibles > 0: oculta elemento #sin-resultados
+   * 
+   * Se llama cada vez que:
+   * - Usuario selecciona una opción de filtro
+   * - Usuario escribe en el buscador
+   * - Usuario limpia los filtros
    */
   function filtrarProductos() {
     // Seleccionamos todas las tarjetas de productos del catálogo

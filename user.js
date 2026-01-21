@@ -1,14 +1,29 @@
 /*
  * user.js
  *
- * Este script gestiona el estado de autenticación del usuario en el lado
- * cliente. Lee y escribe en localStorage para almacenar la lista de
- * usuarios registrados y el usuario actualmente autenticado. Su función
- * principal es actualizar la interfaz de usuario (cabecera) con enlaces
- * apropiados: mostrar enlaces de inicio de sesión y registro cuando nadie
- * ha iniciado sesión, o el nombre del usuario junto con un enlace de
- * cierre de sesión cuando hay un usuario activo. También expone una
- * función para recuperar la información del usuario actual.
+ * GESTIÓN DEL ESTADO DE AUTENTICACIÓN - Información de usuario en cabecera
+ * 
+ * Este script gestiona la visualización del estado de autenticación en la cabecera,
+ * ejecutándose en todas las páginas principales del proyecto.
+ * 
+ * FUNCIONALIDAD:
+ * 1. Lee el usuario actual desde localStorage['currentUser']
+ * 2. Actualiza dinámicamente el elemento #user-info en la cabecera:
+ *    - Si hay usuario autenticado: muestra "Hola, {username}" + enlace "Cerrar sesión"
+ *    - Si no hay usuario: muestra enlaces "Iniciar sesión" y "Registrarse"
+ * 3. Maneja el cierre de sesión (logout):
+ *    - Elimina currentUser de localStorage
+ *    - Recarga la página para actualizar la interfaz
+ * 4. Adapta las rutas de los enlaces según la ubicación actual:
+ *    - Si estamos en /test/ o /ramos/: usa rutas relativas (../login.html)
+ *    - Si estamos en la raíz: usa rutas directas (login.html)
+ * 
+ * FUNCIONES GLOBALES EXPUESTAS:
+ * - window.getCurrentUser(): retorna el usuario actual o null
+ *   Utilizado por product.js para controlar acceso a comentarios
+ * 
+ * ESTRUCTURA DE DATOS EN LOCALSTORAGE:
+ * - 'currentUser': { username: string, password: string } | null
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,11 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Devuelve el usuario actualmente autenticado o null si no hay ninguno.
- * Esta función puede ser utilizada por otros scripts para comprobar
- * permisos (por ejemplo, habilitar el área de comentarios sólo para
- * usuarios registrados).
- * @returns {Object|null} El objeto de usuario con al menos la propiedad username
+ * OBTENER USUARIO ACTUAL (FUNCIÓN GLOBAL)
+ * Lee el usuario autenticado desde localStorage['currentUser']
+ * 
+ * USO:
+ * - product.js: verifica si el usuario puede comentar productos
+ * - Otros scripts: pueden verificar si hay usuario autenticado
+ * 
+ * EJEMPLO:
+ * const user = getCurrentUser();
+ * if (user) {
+ *   console.log('Usuario:', user.username);
+ *   // Mostrar opciones solo para usuarios autenticados
+ * }
+ * 
+ * @returns {Object|null} Objeto usuario { username, password } o null si no hay sesión
  */
 function getCurrentUser() {
   const data = localStorage.getItem('currentUser');
