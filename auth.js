@@ -1,5 +1,5 @@
 /*
- * auth.js
+ * PARTE DE IVÁN PARA EL HITO 2
  *
  * AUTENTICACIÓN DE USUARIOS - Gestión de registro e inicio de sesión
  * 

@@ -1,5 +1,5 @@
 /*
- * script.js
+ * PARTE DE IVÁN PARA EL HITO 2 (CATÁLOGO ENTERO) DINAMICAMENTE, FILTROS, RENDERIZADO mejorado del Hito11
  *
  * CATÁLOGO DE PRODUCTOS - Lógica principal de index.html
  * 

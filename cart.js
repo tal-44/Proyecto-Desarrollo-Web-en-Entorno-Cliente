@@ -1,5 +1,5 @@
 /*
- * cart.js
+ * PARTE DE IVÁN PARA EL HITO 2 (carro renderizado, añadido funciones globales y JSON dinámic)
  *
  * CARRITO DE COMPRAS - Sistema de gestión del carrito de compras persistente
  * 

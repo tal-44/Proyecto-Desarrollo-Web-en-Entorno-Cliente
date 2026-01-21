@@ -1,5 +1,5 @@
 /*
- * user.js
+ * PARTE DE IVÁN PARA EL HITO 2, uso de localStorage para gestionar el estado de autenticación y JSON dinámico.
  *
  * GESTIÓN DEL ESTADO DE AUTENTICACIÓN - Información de usuario en cabecera
  * 

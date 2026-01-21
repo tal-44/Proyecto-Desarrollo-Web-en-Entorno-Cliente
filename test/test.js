@@ -2,6 +2,8 @@
  * test.js
  * Gestiona el test interactivo de recomendación de plantas
  * 
+ *  ESTO LO HIZO JUAN, COMENTÓ SU FUNCIONES PRINCIPALES
+ * 
  */
 
 document.addEventListener('DOMContentLoaded', async () => {

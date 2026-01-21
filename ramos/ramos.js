@@ -1,5 +1,5 @@
 /**
- * ramos.js
+ * PARTE DE JUAN PARA EL HITO 2 (ramos.js) implementación de catálogo dinámico de ramos, JSON y funciones asíncronas.
  * Gestiona la funcionalidad de la página de ramos
  * - Carga los ramos desde product_data.json (es_ramo: true)
  * - Renderiza las tarjetas de producto dinámicamente

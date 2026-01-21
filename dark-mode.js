@@ -1,5 +1,6 @@
 /**
- * dark-mode.js
+ * PARTE DE JUAN PARA EL HITO 2 (dark-mode.js GLOBAL) continuando conla configuración de modo oscuro
+ * 
  * Gestiona el toggle del modo oscuro con persistencia en localStorage
  * Implementa detección de preferencia del sistema operativo
  * 

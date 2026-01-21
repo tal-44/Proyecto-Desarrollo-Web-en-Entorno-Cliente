@@ -1,5 +1,5 @@
 /**
- * test-dark.js
+ * PARTE DE JUAN PARA EL HITO 2 (test-dark.js) CONFIGURACIONES INDIVIDUALES
  * Gestiona el toggle del modo oscuro en la página de Test
  * Implementa persistencia en localStorage para recordar la preferencia del usuario
  * 

@@ -1,5 +1,5 @@
 /*
- * product.js
+ * PARTE DE IVÁN PARA EL HITO 2 (PRODUCTO ENTERO), cargar datos dinámicamente, sistema de comentarios
  *
  * PÁGINA DE DETALLE DE PRODUCTO - Vista detallada de plantas individuales
  * 
