@@ -1,25 +1,20 @@
-/*
+/**
  * dark-mode.js
- *
- * Provides a site‑wide dark mode toggle.  When included on a page,
- * this script looks for an element with the ID `dark-mode-toggle` and
- * attaches a click handler to toggle between light and dark themes.
- * The user's preference is persisted in localStorage so that future
- * visits remember the selected mode.  If no preference has been set
- * yet, the script falls back to the user’s system colour scheme.
+ * Gestiona el toggle del modo oscuro con persistencia en localStorage
+ * Implementa detección de preferencia del sistema operativo
+ * 
+ * Este archivo centralizado proporciona la funcionalidad de modo oscuro
+ * para todas las páginas del proyecto.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
   const toggleBtn = document.getElementById('dark-mode-toggle');
-  // Key used for persistence
-  const DARK_MODE_KEY = 'global-dark-mode';
+  // Clave para localStorage (consistente en todas las páginas)
+  const DARK_MODE_KEY = 'dark-mode';
 
   /**
-   * Applies or removes the `.dark-mode` class on the body and adjusts
-   * the toggle button label.  The toggle button is optional – pages
-   * without a dark mode toggle simply get the appropriate class.
-   *
+   * Establece el estado del modo oscuro
    * @param {boolean} isDark
    */
   function setDarkMode(isDark) {
@@ -27,50 +22,57 @@ document.addEventListener('DOMContentLoaded', () => {
       body.classList.add('dark-mode');
       if (toggleBtn) {
         toggleBtn.classList.add('active');
-        toggleBtn.textContent = 'Modo Claro';
+        toggleBtn.innerHTML = 'Modo Claro';
       }
     } else {
       body.classList.remove('dark-mode');
       if (toggleBtn) {
         toggleBtn.classList.remove('active');
-        toggleBtn.textContent = 'Modo Oscuro';
+        toggleBtn.innerHTML = 'Modo Oscuro';
       }
     }
+    // Guardar preferencia en localStorage
     localStorage.setItem(DARK_MODE_KEY, JSON.stringify(isDark));
   }
 
   /**
-   * Determine the initial mode: read from localStorage if present,
-   * otherwise use the OS preference.
+   * Inicializa el estado del modo oscuro
+   * Prioridad: 1) Preferencia guardada, 2) Preferencia del sistema
    */
   function init() {
     const saved = localStorage.getItem(DARK_MODE_KEY);
     if (saved !== null) {
-      setDarkMode(JSON.parse(saved));
+      // Hay una preferencia guardada
+      const isDarkMode = JSON.parse(saved);
+      setDarkMode(isDarkMode);
     } else {
+      // No hay preferencia, usar la del sistema operativo
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setDarkMode(prefersDark);
     }
   }
 
   /**
-   * Invert the current theme.
+   * Alterna el modo oscuro
    */
-  function toggleDark() {
-    const isDark = body.classList.contains('dark-mode');
-    setDarkMode(!isDark);
+  function toggleDarkMode() {
+    const isDarkMode = body.classList.contains('dark-mode');
+    setDarkMode(!isDarkMode);
   }
 
-  // Attach event listeners
+  // Event listener para el botón de toggle
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', toggleDark);
+    toggleBtn.addEventListener('click', toggleDarkMode);
   }
-  // Listen to system preference changes when no preference is stored
+
+  // Escuchar cambios en la preferencia del sistema operativo
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    // Solo aplicar si el usuario no ha establecido una preferencia manual
     if (localStorage.getItem(DARK_MODE_KEY) === null) {
       setDarkMode(e.matches);
     }
   });
 
+  // Inicializar el modo oscuro al cargar la página
   init();
 });
