@@ -299,18 +299,19 @@ document.addEventListener('DOMContentLoaded', async () => {
    * detallada. Si el usuario hace clic en el botón "Añadir a la cesta",
    * agregamos el producto al carrito.
    */
-  function asignarEventosTarjetas() {
+  async function asignarEventosTarjetas() {
     document.querySelectorAll('.producto-card').forEach(card => {
       // Agregar evento al botón de "Añadir a la cesta"
       const addCartBtn = card.querySelector('.add-to-cart');
       if (addCartBtn) {
-        addCartBtn.addEventListener('click', (e) => {
+        addCartBtn.addEventListener('click', async (e) => {
           e.preventDefault();
           e.stopPropagation();
           const nombre = card.dataset.nombre;
           const producto = todosLosProductos.find(p => p.nombre === nombre);
           if (producto && typeof window.addItemToCart === 'function') {
-            window.addItemToCart(producto.nombre, producto.precio, `img/plantas/${producto.imagen}`);
+            const imagenRuta = await obtenerImagenRuta(producto.imagen);
+            window.addItemToCart(producto.nombre, producto.precio, imagenRuta);
             // Mostrar notificación de confirmación
             Swal.fire({
               icon: 'success',

@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const btnAdd = document.getElementById('producto-add-cart-btn');
     btnAdd.addEventListener('click', () => {
       if (typeof window.addItemToCart === 'function') {
-        window.addItemToCart(prod.nombre, prod.precio, prod.imagen);
+        window.addItemToCart(prod.nombre, prod.precio, imagenRuta);
         const isDark = document.body.classList.contains('dark-mode');
         Swal.fire({
           icon: 'success',
@@ -155,7 +155,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
     for (const item of lista) {
-      const card = await crearTarjetaProducto(item);
+      const imagenRuta = await obtenerImagenRuta(item.imagen);
+      const card = await crearTarjetaProducto(item, imagenRuta);
       grid.appendChild(card);
     }
   }
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    * Crea una tarjeta de producto para productos relacionados.  Se
    * comporta de forma similar a index.js.
    */
-  async function crearTarjetaProducto(prod) {
+  async function crearTarjetaProducto(prod, imagenRutaVerificada = null) {
     const article = document.createElement('article');
     article.className = 'producto-card';
     article.setAttribute('data-temporada', prod.temporada);
@@ -182,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     badgeTem.textContent = capitalizar(prod.temporada);
     const img = document.createElement('img');
     // Obtener ruta de imagen verificada
-    const imagenRuta = await obtenerImagenRuta(prod.imagen);
+    const imagenRuta = imagenRutaVerificada || await obtenerImagenRuta(prod.imagen);
     img.src = imagenRuta;
     img.alt = prod.nombre;
     imgDiv.appendChild(badgeDif);
@@ -205,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       if (typeof window.addItemToCart === 'function') {
-        window.addItemToCart(prod.nombre, prod.precio, prod.imagen);
+        window.addItemToCart(prod.nombre, prod.precio, imagenRuta);
         const isDark = document.body.classList.contains('dark-mode');
         Swal.fire({
           icon: 'success',
