@@ -1,13 +1,22 @@
 /*
  * cart.js
  *
- * Implements a simple shopping cart stored in localStorage.  The cart is
- * shared across pages – functions defined here are attached to the
- * `window` object so that other scripts can add items to the cart.
- * When the user clicks the cart icon in the header the cart overlay
- * appears, listing the current items, quantities and the total.  The
- * overlay allows incrementing/decrementing quantities and removing
- * items.  All changes persist immediately to localStorage.
+ * CARRITO DE COMPRAS - Sistema de gestión del carrito de compras persistente
+ * 
+ * Este script implementa un carrito de compras funcional que:
+ * - Almacena los productos en localStorage para persistencia entre sesiones
+ * - Expone funciones globales (window.addItemToCart, window.openCart, window.closeCart)
+ *   que pueden ser llamadas desde otros scripts (script.js, product.js, ramos.js, etc.)
+ * - Crea una interfaz modal flotante que se muestra al hacer clic en el icono de carrito
+ * - Permite modificar cantidades (incrementar/decrementar) y eliminar productos
+ * - Calcula automáticamente el total de la compra
+ * - Sincroniza cambios inmediatamente con localStorage para persistencia
+ * 
+ * ESTRUCTURA DE DATOS:
+ * Cada elemento del carrito en localStorage tiene la forma:
+ * { name: string, price: number, image: string, qty: number }
+ * 
+ * El carrito se almacena con la clave 'cart' en localStorage como JSON string
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -32,8 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Reads the cart from localStorage.  Returns an empty array if no
-   * cart is stored.
+   * CARGAR CARRITO DESDE LOCALSTORAGE
+   * Lee el carrito almacenado en localStorage bajo la clave 'cart'.
+   * - Si no existe un carrito guardado, retorna un array vacío
+   * - Valida y normaliza cada item: name, price (number), image, qty (number)
+   * - Captura errores en caso de JSON malformado
+   * 
+   * @returns {Array} Array de objetos con estructura { name, price, image, qty }
    */
   function loadCart() {
     const saved = localStorage.getItem('cart');
@@ -55,15 +69,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Saves the cart to localStorage.
+   * GUARDAR CARRITO EN LOCALSTORAGE
+   * Persiste el estado actual del carrito en localStorage bajo la clave 'cart'
+   * - Serializa el array de items a JSON string
+   * - Se llama automáticamente después de cualquier modificación (añadir, eliminar, cambiar cantidad)
+   * - Permite que el carrito persista entre recargas de página y sesiones
    */
   function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
   }
 
   /**
-   * Updates the small number displayed on the cart icon.  Sums the
-   * quantities of all items.
+   * ACTUALIZAR CONTADOR DEL CARRITO
+   * Actualiza el número que aparece en el icono de carrito de la cabecera
+   * - Suma todas las cantidades (qty) de los items del carrito
+   * - Se llama cada vez que el carrito cambia para mantener sincronizado el contador visual
+   * - El contador muestra el número total de unidades, no de productos diferentes
    */
   function updateCartCount() {
     const countEl = document.getElementById('cart-count');
@@ -76,9 +97,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Creates the cart overlay DOM structure.  Returns the root
-   * element.  All event handlers for closing and modifying the cart
-   * are attached here.
+   * CREAR INTERFAZ MODAL DEL CARRITO
+   * Construye la estructura DOM del modal que se muestra al hacer clic en el icono de carrito
+   * 
+   * ESTRUCTURA:
+   * - Overlay: capa semitransparente que cubre la página
+   * - Modal: contenedor principal con header, items, y resumen
+   *   - Header: título "Tu cesta" + botón cerrar (×)
+   *   - Items container: donde se renderizan los productos del carrito
+   *   - Summary: total de precio y botones de acción (Vaciar, Comprar)
+   * 
+   * EVENTOS:
+   * - Botón Vaciar: elimina todos los items, guarda, renderiza y actualiza contador
+   * - Botón Comprar: vacía el carrito, muestra alerta de éxito, cierra el modal
+   * 
+   * @returns {HTMLElement} El elemento raíz del overlay (contenedor del modal)
    */
   function createOverlay() {
     const overlayEl = document.createElement('div');
@@ -156,8 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Renders the cart items and total in the modal.  Called whenever
-   * the cart contents change.
+   * RENDERIZAR ITEMS DEL CARRITO
+   * Actualiza dinámicamente el contenido del modal del carrito
+   * 
+   * PROCESO:
+   * 1. Limpia el contenido anterior del contenedor de items
+   * 2. Si el carrito está vacío, muestra mensaje "Tu cesta está vacía"
+   * 3. Si hay items:
+   *    - Itera cada item y crea una fila con:
+   *      * Imagen del producto
+   *      * Nombre y precio unitario
+   *      * Controles de cantidad (−, cantidad, +)
+   *      * Botón para eliminar el item
+   * 4. Calcula el total multiplicando (precio × cantidad) para cada item
+   * 5. Actualiza el texto del total al final del modal
+   * 
+   * Se llama automáticamente tras cualquier cambio en el carrito
    */
   function renderCart() {
     const overlayEl = document.querySelector('.cart-overlay');
@@ -265,13 +312,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /**
-   * Adds an item to the cart.  If the item already exists (matching
-   * name), its quantity increases.  Exposed globally so other modules
-   * can call window.addItemToCart(name, price, image).
-   *
-   * @param {string} name – product name
-   * @param {number|string} price – product price
-   * @param {string} image – URL or path to product image
+   * AÑADIR ITEM AL CARRITO (FUNCIÓN GLOBAL)
+   * Añade un producto al carrito. Si el producto ya existe, incrementa su cantidad.
+   * 
+   * LÓGICA:
+   * 1. Convierte el precio a número
+   * 2. Busca si el item ya existe (comparando nombres)
+   * 3. Si existe: incrementa qty en 1
+   * 4. Si no existe: crea nuevo item { name, price, image, qty: 1 }
+   * 5. Guarda en localStorage y actualiza el contador visual
+   * 
+   * EXPOSICIÓN GLOBAL:
+   * Se asigna a window.addItemToCart para que pueda ser llamada desde:
+   * - script.js (catálogo)
+   * - product.js (página de detalle)
+   * - ramos.js (ramos pre-hechos)
+   * - test.js (test con sugerencias)
+   * 
+   * @param {string} name Nombre del producto
+   * @param {number|string} price Precio unitario del producto
+   * @param {string} image Ruta o URL de la imagen del producto (verificada con default.jpg)
    */
   function addItemToCart(name, price, image) {
     price = parseFloat(price);

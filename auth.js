@@ -1,11 +1,35 @@
 /*
  * auth.js
  *
- * Este script maneja el registro e inicio de sesión de usuarios en el
- * proyecto. Utiliza localStorage para persistir la lista de usuarios
- * registrados y el usuario actualmente autenticado. Contiene funciones
- * auxiliares para cargar/guardar usuarios y para procesar los formularios
- * de registro e inicio de sesión.
+ * AUTENTICACIÓN DE USUARIOS - Gestión de registro e inicio de sesión
+ * 
+ * Este script implementa un sistema completo de autenticación que:
+ * - Maneja el registro de nuevos usuarios
+ * - Gestiona el inicio de sesión (login) de usuarios existentes
+ * - Valida credenciales contra la lista de usuarios registrados
+ * - Almacena usuarios en localStorage bajo la clave 'users' (array de usuarios)
+ * - Persiste el usuario actualmente autenticado bajo 'currentUser' en localStorage
+ * - Se ejecuta solo en las páginas login.html y register.html
+ * 
+ * FLUJO DE USUARIO:
+ * REGISTRO:
+ *   1. Usuario completa formulario con nombre de usuario y contraseña
+ *   2. Validación: min 3 caracteres usuario, min 4 caracteres contraseña, coincidencia
+ *   3. Se verifica que el usuario no esté ya registrado
+ *   4. Se guarda el nuevo usuario en localStorage['users']
+ *   5. Se establece como usuario actual en localStorage['currentUser']
+ *   6. Se redirige a index.html
+ * 
+ * LOGIN:
+ *   1. Usuario completa formulario con credenciales
+ *   2. Se busca el usuario en localStorage['users']
+ *   3. Se valida que la contraseña coincida
+ *   4. Se establece como usuario actual en localStorage['currentUser']
+ *   5. Se redirige a index.html
+ *
+ * ESTRUCTURA DE DATOS EN LOCALSTORAGE:
+ * - 'users': [{ username: string, password: string }, ...]
+ * - 'currentUser': { username: string, password: string } | null
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -21,9 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
- * Carga la lista de usuarios desde localStorage. Si no existe, devuelve
- * un array vacío.
- * @returns {Array} Lista de usuarios almacenados
+ * CARGAR LISTA DE USUARIOS DESDE LOCALSTORAGE
+ * Lee el array de usuarios registrados desde localStorage['users']
+ * - Si localStorage['users'] no existe o está vacío, retorna array vacío
+ * - Si hay error al parsear JSON, captura la excepción y retorna array vacío
+ * 
+ * NOTA: Esta función no valida la estructura de los datos, solo los carga
+ * 
+ * @returns {Array} Array de objetos usuario con estructura { username, password }
  */
 function loadUsers() {
   const data = localStorage.getItem('users');
@@ -36,18 +65,41 @@ function loadUsers() {
 }
 
 /**
- * Guarda la lista de usuarios en localStorage.
- * @param {Array} users Lista de usuarios a persistir
+ * GUARDAR LISTA DE USUARIOS EN LOCALSTORAGE
+ * Persiste el array completo de usuarios en localStorage['users']
+ * - Serializa el array a JSON string
+ * - Sobrescribe cualquier dato anterior en esa clave
+ * - Se llama cada vez que se registra un nuevo usuario
+ * 
+ * @param {Array} users Array de objetos usuario { username, password }
  */
 function saveUsers(users) {
   localStorage.setItem('users', JSON.stringify(users));
 }
 
 /**
- * Maneja el envío del formulario de registro. Valida la entrada,
- * comprueba si el usuario ya existe y, si todo es correcto, almacena
- * el nuevo usuario y lo establece como usuario actual.
- * @param {Event} e Evento de envío de formulario
+ * PROCESAR FORMULARIO DE REGISTRO
+ * Maneja la lógica completa del registro de un nuevo usuario
+ * 
+ * VALIDACIONES:
+ * 1. Username: mínimo 3 caracteres
+ * 2. Password: mínimo 4 caracteres
+ * 3. Confirmación: las dos contraseñas deben coincidir
+ * 4. Unicidad: el username no puede estar ya registrado (case-insensitive)
+ * 
+ * PROCESO SI VALIDACIONES PASAN:
+ * 1. Carga usuarios actuales desde localStorage['users']
+ * 2. Añade el nuevo usuario al array
+ * 3. Guarda el array actualizado en localStorage
+ * 4. Establece el nuevo usuario como currentUser en localStorage
+ * 5. Limpia los campos del formulario
+ * 6. Redirige a index.html
+ * 
+ * EN CASO DE ERROR:
+ * - Muestra mensaje de error en el elemento #register-error
+ * - NO envía el formulario ni guarda datos
+ * 
+ * @param {Event} e Evento de envío del formulario (submit)
  */
 function handleRegister(e) {
   e.preventDefault();
@@ -102,10 +154,27 @@ function handleRegister(e) {
 }
 
 /**
- * Maneja el envío del formulario de inicio de sesión. Comprueba las
- * credenciales introducidas contra la lista de usuarios y, si son
- * correctas, establece el usuario actual en localStorage.
- * @param {Event} e Evento de envío de formulario
+ * PROCESAR FORMULARIO DE INICIO DE SESIÓN (LOGIN)
+ * Autentica un usuario verificando sus credenciales contra localStorage['users']
+ * 
+ * PROCESO:
+ * 1. Valida que usuario y contraseña no estén vacíos
+ * 2. Carga la lista de usuarios registrados desde localStorage
+ * 3. Busca el usuario por nombre (case-insensitive)
+ * 4. Si no existe: muestra error "El usuario no existe"
+ * 5. Si existe: compara la contraseña (case-sensitive)
+ *    - Si no coincide: muestra error "Contraseña incorrecta"
+ *    - Si coincide: establece como currentUser y redirige a index.html
+ * 
+ * PERSISTENCIA:
+ * - El usuario autenticado se guarda en localStorage['currentUser']
+ * - Esto permite que user.js acceda a la información del usuario en otras páginas
+ * 
+ * ERRORES:
+ * - Se muestran en elemento #login-error
+ * - No se redirige si hay error
+ * 
+ * @param {Event} e Evento de envío del formulario (submit)
  */
 function handleLogin(e) {
   e.preventDefault();
@@ -152,9 +221,11 @@ function handleLogin(e) {
 }
 
 /**
- * Muestra un mensaje de error en el elemento indicado y lo hace visible.
- * @param {HTMLElement} element Elemento donde mostrar el mensaje
- * @param {string} message Texto del error
+ * MOSTRAR MENSAJE DE ERROR
+ * Utilidad para mostrar mensajes de error en los formularios de autenticación
+ * 
+ * @param {HTMLElement} element Elemento DOM donde mostrar el mensaje (ej: <p id="login-error">)
+ * @param {string} message Texto del mensaje de error a mostrar
  */
 function showError(element, message) {
   if (!element) {
