@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión - Rincón Verde</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Formato similar al de registro */
+    .auth-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .auth-container h1 {
+      margin-top: 0;
+      color: #2c662d;
+      font-size: 1.5rem;
+    }
+    .auth-container label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: #333;
+      font-weight: bold;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 0.6rem;
+      border: none;
+      background-color: #2c662d;
+      color: #fff;
+      font-size: 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .auth-container button:hover {
+      background-color: #265a28;
+    }
+    .error-message {
+      color: #d9534f;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    .auth-links {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    .auth-links a {
+      color: #2c662d;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cabecera reutilizada -->
+  <header class="site-header">
+    <div class="top-bar">
+      Descubre nuestras plantas de temporada | Envío gratis en compras superiores a 50€
+    </div>
+    <div class="header-main">
+      <div class="logo">🌱 Rincón Verde</div>
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">Catálogo</a>
+        <a href="test.html" class="nav-link">Realiza un Test</a>
+        <a href="ramos.html" class="nav-link">Ramos Pre-hechos</a>
+      </nav>
+      <div class="user-actions">
+        <div id="user-info" class="user-info"></div>
+        <button id="open-cart" class="cart-button" aria-label="Ver carrito">
+          <span class="cart-icon">&#x1f6cd;</span>
+          <span id="cart-count" class="cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <!-- Botón de modo oscuro flotante -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    Modo Oscuro
+  </button>
+
+  <main>
+    <div class="auth-container">
+      <h1>Iniciar sesión</h1>
+      <p id="login-error" class="error-message" style="display:none;"></p>
+      <form id="login-form">
+        <label for="login-username">Usuario</label>
+        <input type="text" id="login-username" required placeholder="Tu nombre de usuario">
+        <label for="login-password">Contraseña</label>
+        <input type="password" id="login-password" required placeholder="Tu contraseña">
+        <button type="submit">Entrar</button>
+      </form>
+      <div class="auth-links">
+        ¿No tienes cuenta? <a href="register.html">Regístrate aquí</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <script src="cart.js"></script>
+  <script src="user.js"></script>
+  <script src="auth.js"></script>
+  <!-- Script de modo oscuro global -->
+  <script src="dark-mode.js"></script>
+</body>
+</html>

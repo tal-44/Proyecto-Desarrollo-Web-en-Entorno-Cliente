@@ -9,6 +9,22 @@
 
 document.addEventListener('DOMContentLoaded', async () => {
   const grid = document.getElementById('productos-grid');
+
+  /**
+   * Obtiene la ruta de imagen correcta.
+   * Verifica si la imagen existe, si no usa default.jpg
+   */
+  function obtenerImagenRuta(imagen) {
+    if (!imagen) return '../img/plantas/default.jpg';
+    const ruta = imagen.startsWith('../img/') ? imagen : `../img/plantas/${imagen}`;
+    // Creamos una imagen temporal para verificar si existe
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(ruta);
+      img.onerror = () => resolve('../img/plantas/default.jpg');
+      img.src = ruta;
+    });
+  }
   
   /**
    * Carga los productos desde el JSON
@@ -43,7 +59,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Crea una tarjeta de producto HTML
    */
-  const crearTarjetaProducto = (ramo) => {
+  const crearTarjetaProducto = async (ramo) => {
     const article = document.createElement('article');
     article.className = 'producto-card';
     article.setAttribute('data-es-ramo', 'true');
@@ -63,9 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     badgeTem.className = `badge badge-temporada ${ramo.temporada}`;
     badgeTem.textContent = capitalizar(ramo.temporada);
 
-    // Imagen
+    // Imagen - obtener ruta verificada
+    const imagenRuta = await obtenerImagenRuta(ramo.imagen);
     const img = document.createElement('img');
-    img.src = `../img/plantas/${ramo.imagen}`;
+    img.src = imagenRuta;
     img.alt = ramo.nombre;
 
     imagenDiv.appendChild(badgeTem);
@@ -179,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Renderiza los ramos en la cuadrícula
    */
-  const renderizarRamos = (ramos) => {
+  const renderizarRamos = async (ramos) => {
     grid.innerHTML = '';
     
     if (ramos.length === 0) {
@@ -187,10 +204,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    ramos.forEach(ramo => {
-      const tarjeta = crearTarjetaProducto(ramo);
+    for (const ramo of ramos) {
+      const tarjeta = await crearTarjetaProducto(ramo);
       grid.appendChild(tarjeta);
-    });
+    }
   };
 
   // Inicialización

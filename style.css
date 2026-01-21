@@ -1,11 +1,21 @@
 /*
- * Estilos básicos para el Hito 1.
- * Se agrupan en un único archivo para simplificar la estructura.
- * El objetivo es replicar un aspecto limpio y actual con el mínimo CSS
- * necesario para practicar manipulación del DOM y eventos.
+ * style.css
+ *
+ * This stylesheet defines the shared look and feel for all pages of the
+ * Rincón Verde project.  It introduces a system of CSS custom properties
+ * (variables) to handle colours, spacing and typography in both light and
+ * dark themes.  The colour palette is inspired by the pages already
+ * implemented for the ramos section and extended to cover headers, cards,
+ * buttons and forms.  When the `dark-mode` class is present on the body
+ * element the alternate values defined below will take effect.
  */
 
-/* Variables CSS para tema claro y oscuro */
+/*
+ * Base variables – these values are used when the site is in light mode.
+ * Components reference these variables instead of hard‑coded colours,
+ * making it easy to tweak the palette in one place.  If you wish to
+ * modify the overall appearance of the site, adjust these definitions.
+ */
 :root {
   --bg-primario: #ffffff;
   --bg-secundario: #f5f5f5;
@@ -16,8 +26,17 @@
   --accent-light: #8ab078;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   --hover-bg: #e5f5e0;
+  --top-bar-bg: #2c662d;
+  --top-bar-text: #ffffff;
+  --nav-link-hover: #e5f5e0;
+  --error-color: #c0392b;
 }
 
+/*
+ * Dark mode overrides.  When body.dark-mode is applied (via JS), these
+ * variables override their light counterparts.  The same component
+ * definitions further below will automatically pick up these values.
+ */
 body.dark-mode {
   --bg-primario: #1e1e1e;
   --bg-secundario: #2d2d2d;
@@ -28,44 +47,75 @@ body.dark-mode {
   --accent-light: #6b9b6d;
   --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   --hover-bg: #3a4a3a;
+  --top-bar-bg: #a8d5a8;
+  --top-bar-text: #1e1e1e;
+  --nav-link-hover: #3a4a3a;
+  --error-color: #e74c3c;
 }
-/* Reset simple */
-body {
+
+/*
+ * Reset and typography
+ */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: Arial, sans-serif;
+  padding: 0;
+}
+
+html,
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
   background-color: var(--bg-secundario);
-    color: var(--colorTexto-primario);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Cabecera */
-.top-bar {
-  background-color: var(--accent-light);
-  color: #fff;
-  padding: 0.5rem;
-  text-align: center;
-  font-size: 0.85rem;
-  transition: background-color 0.3s ease;
-}
-
-.header-main {
-  background-color: var(--bg-primario);
+  color: var(--colorTexto-primario);
+  min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/*
+ * Top bar – simple strip above the header with promotional text.  The
+ * colours are drawn from the palette so that the bar in dark mode
+ * automatically inverts.
+ */
+.top-bar {
+  background-color: var(--top-bar-bg);
+  color: var(--top-bar-text);
+  padding: 0.3rem 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/*
+ * Header and navigation
+ */
+.site-header {
+  background-color: var(--bg-primario);
+  border-bottom: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--accent-color);
-    transition: color 0.3s ease;
 }
 
 .nav-menu {
@@ -74,138 +124,67 @@ body {
 }
 
 .nav-link {
-  text-decoration: none;
-  color: var(--accent-color);
-  padding: 0.5rem 1rem;
+  color: var(--colorTexto-primario);
+  padding: 0.5rem 0.75rem;
   border-radius: 4px;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s ease;
 }
 
 .nav-link:hover {
-  background-color: var(--hover-bg);
+  background-color: var(--nav-link-hover);
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/*
+ * Cart icon
+ */
+.cart-button {
+  background: none;
+  border: none;
+  color: var(--colorTexto-primario);
+  cursor: pointer;
+  position: relative;
+  font-size: 1.5rem;
 }
 
 .cart-count {
+  position: absolute;
+  top: -6px;
+  right: -10px;
   background-color: var(--accent-color);
   color: #fff;
-  padding: 0.2rem 0.5rem;
-  border-radius: 999px;
+  border-radius: 50%;
+  padding: 0 5px;
   font-size: 0.75rem;
-  margin-left: 0.5rem;
+  min-width: 18px;
+  text-align: center;
 }
 
-/* Disposición principal */
+/*
+ * Main layout
+ */
 .site-main {
   display: flex;
+  flex: 1;
   max-width: 1200px;
+  width: 100%;
   margin: 2rem auto;
   padding: 0 1rem;
   gap: 2rem;
 }
 
-/* Panel de filtros */
-.filtros {
-  width: 220px;
-  background-color: var(--bg-primario);
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: var(--card-shadow);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.filtros h2 {
-  margin-top: 0;
-  color: var(--accent-color);
-}
-
-.filtro-grupo {
-  margin-bottom: 1rem;
-}
-
-.filtro-toggle {
-  width: 100%;
-  background-color: var(--hover-bg);
-  border: none;
-  padding: 0.5rem;
-  text-align: left;
-  font-size: 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  color: var(--accent-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.filtro-opciones {
-  display: none;
-  margin-top: 0.5rem;
-}
-
-.filtro-opciones.visible {
-  display: block;
-}
-
-.filtro-opcion {
-  display: block;
-  width: 100%;
-  padding: 0.4rem 0.5rem;
-  background-color: var(--bg-secundario);
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-  margin-bottom: 0.3rem;
-  text-align: left;
-  font-size: 0.9rem;
-  color: var(--colorTexto-primario);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.filtro-opcion.selected,
-.filtro-opcion:hover {
-  background-color: var(--hover-bg);
-}
-
-.limpiar-btn {
-  background-color: #f0dede;
-  border: none;
-  padding: 0.5rem;
-  width: 100%;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.3s ease;
-  }
-  
-  body.dark-mode .limpiar-btn {
-    background-color: #4a3535;
-    color: #e8e8e8;
-}
-
-.limpiar-btn:hover {
-  background-color: #e9c8c8;
-}
-
-body.dark-mode .limpiar-btn:hover {
-  background-color: #5a4545;
-}
-/* Catálogo */
-.catalogo {
-  flex: 1;
-}
-
-.catalogo-header h1 {
-  margin: 0;
-  color: var(--accent-color);
-}
-
-.catalogo-header p {
-  margin: 0.5rem 0 1rem;
-  color: var(--colorTexto-secundario);
-}
-
+/*
+ * Catalogue grid
+ */
 .productos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .producto-card {
@@ -215,42 +194,35 @@ body.dark-mode .limpiar-btn:hover {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.producto-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.producto-imagen {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .producto-imagen img {
   width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
-.producto-info {
-  padding: 0.8rem;
-}
-
-.producto-info h3 {
-  margin: 0 0 0.3rem;
-  color: var(--accent-color);
-  font-size: 1.1rem;
-}
-
-.producto-info p {
-  margin: 0.2rem 0;
-  color: var(--colorTexto-secundario);
-  font-size: 0.9rem;
-}
-
-/* =============================================================
- * Etiquetas (badges) para temporada y dificultad
- * Estas clases permiten mostrar pequeñas etiquetas en las esquinas
- * de la imagen de cada tarjeta. La clase .badge-dificultad se
- * posiciona a la izquierda y .badge-temporada a la derecha. Los
- * colores se definen según el valor de la temporada o la dificultad.
- */
-
-/* Aseguramos que las imágenes de productos sean el contenedor padre de las etiquetas */
-.producto-imagen {
-  position: relative;
+.producto-card:hover .producto-imagen img {
+  transform: scale(1.05);
 }
 
 .badge {
@@ -261,10 +233,11 @@ body.dark-mode .limpiar-btn:hover {
   font-weight: bold;
   color: #ffffff;
   text-transform: uppercase;
-  pointer-events: none; /* no bloquea clicks */
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 5;
 }
 
-/* Posicionamiento de las etiquetas */
 .badge-dificultad {
   left: 0.5rem;
   top: 0.5rem;
@@ -275,121 +248,739 @@ body.dark-mode .limpiar-btn:hover {
   top: 0.5rem;
 }
 
-/* Colores de temporada */
-.badge-temporada.primavera { background-color: #80c581; }
-.badge-temporada.verano { background-color: #f5b041; }
-.badge-temporada.otoño { background-color: #d35400; }
-.badge-temporada.invierno { background-color: #5dade2; }
-.badge-temporada.todo_año { background-color: #95a5a6; }
+/* Dificultad colours */
+.badge-dificultad.facil {
+  background-color: var(--accent-light);
+}
 
-/* Colores de dificultad */
-.badge-dificultad.facil { background-color: #27ae60; }
-.badge-dificultad.media { background-color: #e67e22; }
-.badge-dificultad.dificil { background-color: #c0392b; }
+.badge-dificultad.media {
+  background-color: #f39c12;
+}
 
-/* Botón para añadir productos al carrito */
+.badge-dificultad.dificil {
+  background-color: #e74c3c;
+}
+
+/* Temporada colours */
+.badge-temporada.primavera {
+  background-color: #2ecc71;
+}
+
+.badge-temporada.verano {
+  background-color: #e67e22;
+}
+
+.badge-temporada.otoño {
+  background-color: #d35400;
+}
+
+.badge-temporada.invierno {
+  background-color: #3498db;
+}
+
+.badge-temporada.todo_año {
+  background-color: #9b59b6;
+}
+
+.producto-info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.producto-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--colorTexto-primario);
+}
+
+.producto-info .nombre-cientifico {
+  font-size: 0.85rem;
+  color: var(--colorTexto-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.producto-info .precio {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: var(--accent-color);
+}
+
+/* Botón de añadir a la cesta */
 .add-to-cart {
-  margin-top: 0.5rem;
-  width: 100%;
-  padding: 0.4rem;
+  margin-top: auto;
+  padding: 0.5rem;
   background-color: var(--accent-color);
+  color: #fff;
   border: none;
   border-radius: 4px;
-  color: #ffffff;
   cursor: pointer;
   font-size: 0.85rem;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .add-to-cart:hover {
   background-color: var(--accent-light);
 }
 
-/* Estilo del botón del carrito en la cabecera */
-.cart-button {
-  background-color: var(--hover-bg);
-  border: none;
-  cursor: pointer;
-  position: relative;
-  font-size: 1.5rem;
-  color: var(--accent-color);
-  display: flex;
-  align-items: center;
-  padding: 0.25rem 0.4rem;
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.cart-button:hover {
-  background-color: var(--hover-bg);
-}
-
-/* Icono dentro del botón del carrito */
-.cart-icon {
-  margin-right: 0.25rem;
-}
-
-/* Etiqueta de contador dentro del icono del carrito */
-.cart-count {
-  background-color: #e74c3c;
-  color: #ffffff;
-  padding: 0.1rem 0.35rem;
-  border-radius: 999px;
-  font-size: 0.65rem;
-  position: absolute;
-  top: -0.4rem;
-  right: -0.6rem;
-  display: none; /* se activa mediante JavaScript cuando hay artículos */
-}
-
-.sin-resultados {
-  padding: 1rem;
-  text-align: center;
-  background-color: var(--bg-primario);
-  border-radius: 4px;
-  color: #b00020;
-  margin-top: 1rem;
-  border: 1px solid rgba(176, 0, 32, 0.2);
-  }
-  
-  body.dark-mode .sin-resultados {
-    background-color: #3a2a2a;
-    color: #ff6b6b;
-}
-
-/* Pie de página */
-.site-footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: var(--bg-secundario);
-    color: var(--colorTexto-secundario);
-  margin-top: 2rem;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* =============================================================
- * Estilos adicionales para la página de test
- * Estos estilos se aplican a los fieldset, leyendas y etiquetas
- * dentro del formulario del test para mejorar la legibilidad
- * y la estructura vertical de las preguntas. No afectan a las
- * demás páginas del proyecto.
+/* 
+ * Catalogue headers
  */
-.test-container fieldset {
-  border: none;
-  margin-bottom: 1rem;
-  padding: 0;
+.catalogo-header {
+  margin-bottom: 1.5rem;
 }
 
-.test-container legend {
+.catalogo-header h1 {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+  color: var(--colorTexto-primario);
+}
+
+.catalogo-header p {
+  font-size: 0.9rem;
+  color: var(--colorTexto-secundario);
+}
+
+/*
+ * Filtros (side panel)
+ */
+.filtros {
+  width: 220px;
+  background-color: var(--bg-primario);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: var(--card-shadow);
+  flex-shrink: 0;
+}
+
+.filtro-grupo {
+  margin-bottom: 1rem;
+}
+
+.filtro-grupo h3 {
+  margin-bottom: 0.5rem;
+}
+
+.filtro-toggle {
+  background-color: var(--bg-secundario);
+  border: 1px solid var(--border-color);
+  color: var(--colorTexto-primario);
+  padding: 0.5rem;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+  cursor: pointer;
   font-weight: bold;
   margin-bottom: 0.5rem;
-  display: block;
-  color: var(--accent-color);
 }
 
-.test-container label {
-  display: block;
+.filtro-toggle:hover {
+  background-color: var(--hover-bg);
+}
+
+.filtro-opciones {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-left: 1rem;
   margin-bottom: 0.5rem;
-  cursor: pointer;
+}
+
+.filtro-opciones.visible {
+  display: flex;
+}
+
+.filtro-opcion {
+  padding: 0.5rem;
+  background-color: var(--bg-secundario);
+  border: 1px solid var(--border-color);
   color: var(--colorTexto-primario);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.filtro-opcion:hover {
+  background-color: var(--hover-bg);
+}
+
+.filtro-opcion.selected {
+  background-color: var(--accent-light);
+  color: var(--bg-primario);
+}
+
+.limpiar-btn {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: var(--error-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.limpiar-btn:hover {
+  background-color: darken(var(--error-color), 10%);
+}
+
+/*
+ * Layout for catalogue with sidebar
+ */
+.catalogo {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.catalogo .catalogo-header {
+  margin-bottom: 1rem;
+}
+
+.catalogo .productos-grid {
+  width: 100%;
+}
+
+/*
+ * Dark mode toggle button
+ */
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background-color: var(--bg-primario);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.dark-mode-toggle.active {
+  background-color: var(--accent-color);
+  color: var(--bg-primario);
+  transform: rotate(180deg);
+}
+
+.dark-mode-toggle:hover {
+  background-color: var(--accent-light);
+}
+
+/*
+ * Forms (auth and comments)
+ */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primario);
+  color: var(--colorTexto-primario);
+  font-size: 1rem;
+}
+
+button[type="submit"] {
+  padding: 0.5rem;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+button[type="submit"]:hover {
+  background-color: var(--accent-light);
+}
+
+.error {
+  color: var(--error-color);
+  font-size: 0.85rem;
+}
+
+/*
+ * Cart overlay styles (new)
+ */
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.cart-modal {
+  background-color: var(--bg-primario);
+  padding: 1rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: var(--card-shadow);
+  position: relative;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.cart-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.cart-items {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cart-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
+.cart-item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.cart-qty {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.cart-qty button {
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secundario);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.cart-qty span {
+  min-width: 20px;
+  text-align: center;
+}
+
+.cart-summary {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cart-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.cart-actions button {
+  padding: 0.5rem 1rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.cart-actions button:first-child {
+  background-color: var(--error-color);
+}
+
+.cart-actions button:last-child {
+  background-color: var(--accent-color);
+}
+
+.cart-actions button:hover {
+  filter: brightness(0.9);
+}
+
+.text-center {
+  text-align: center;
+}
+
+/*
+ * Search input
+ */
+.search-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-primario);
+  color: var(--colorTexto-primario);
+}
+
+.search-input::placeholder {
+  color: var(--colorTexto-secundario);
+}
+
+/*
+ * Product detail page layout (adapted from ramos view)
+ */
+.vista-ramo-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.ramo-detalle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  background-color: var(--bg-primario);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+.ramo-imagen {
+  flex: 1 1 300px;
+  position: relative;
+}
+
+.ramo-imagen .imagen-principal {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.badges-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.ramo-info {
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ramo-info h1 {
+  font-size: 1.8rem;
+  color: var(--colorTexto-primario);
+}
+
+.ramo-info .descripcion {
+  font-size: 1rem;
+  color: var(--colorTexto-secundario);
+}
+
+.ramo-caracteristicas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.caracteristica {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.caracteristica .label {
+  font-weight: bold;
+  color: var(--colorTexto-primario);
+}
+
+.caracteristica .valor {
+  color: var(--colorTexto-secundario);
+}
+
+.add-to-cart-detail {
+  align-self: flex-start;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.add-to-cart-detail:hover {
+  background-color: var(--accent-light);
+}
+
+.volver-btn {
+  margin-top: 1rem;
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+.volver-btn:hover {
+  text-decoration: underline;
+}
+
+.ramos-relacionados {
+  background-color: var(--bg-primario);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+.ramos-relacionados h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: var(--colorTexto-primario);
+}
+
+.productos-grid#productos-relacionados-grid {
+  gap: 1rem;
+}
+
+/*
+ * Comments section (if any)
+ */
+.comentarios {
+  margin-top: 2rem;
+}
+
+.comentarios h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--colorTexto-primario);
+}
+
+.comentarios-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comentario {
+  padding: 1rem;
+  background-color: var(--bg-primario);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: var(--card-shadow);
+}
+
+.comentario .comentario-autor {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  color: var(--colorTexto-primario);
+}
+
+.comentario .comentario-fecha {
+  font-size: 0.85rem;
+  color: var(--colorTexto-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.comentario .comentario-cuerpo {
+  font-size: 1rem;
+  color: var(--colorTexto-primario);
+}
+
+/* Star rating for comments */
+.stars {
+  color: #f1c40f;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .site-main {
+    flex-direction: column;
+  }
+  .filtros {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+  .ramo-detalle {
+    flex-direction: column;
+  }
+}
+
+/*
+ * Comments Section Styles
+ */
+#comments-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: var(--bg-primario);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+#comments-section h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: var(--colorTexto-primario);
+}
+
+.comments-list {
+  margin-bottom: 1.5rem;
+}
+
+.comment {
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+}
+
+.comment:last-child {
+  border-bottom: none;
+}
+
+.comment-author {
+  font-weight: bold;
+  color: var(--colorPrimario);
+  margin-bottom: 0.3rem;
+}
+
+.comment-rating {
+  color: #f5a623;
+  font-size: 1.1rem;
+  margin-bottom: 0.3rem;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: var(--colorTexto-secundario);
+  margin-bottom: 0.5rem;
+}
+
+.comment p {
+  margin: 0.5rem 0 0 0;
+  color: var(--colorTexto-primario);
+  line-height: 1.5;
+}
+
+.comment-form-container {
+  margin-top: 1.5rem;
+}
+
+.comment-login-msg {
+  padding: 1rem;
+  background-color: var(--bg-secundario);
+  border-left: 4px solid var(--colorPrimario);
+  color: var(--colorTexto-primario);
+  margin: 0;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.comment-form label {
+  font-weight: bold;
+  color: var(--colorTexto-primario);
+  margin-bottom: 0.3rem;
+}
+
+.comment-form select,
+.comment-form textarea {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--bg-secundario);
+  color: var(--colorTexto-primario);
+  font-family: inherit;
+}
+
+.comment-form textarea::placeholder {
+  color: var(--colorTexto-secundario);
+}
+
+.comment-form button {
+  align-self: flex-start;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--colorPrimario);
+  color: rgb(105, 199, 131);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.comment-form button:hover {
+  background-color: var(--colorHover);
+}
+
+/* Dark mode support for comments */
+body.dark-mode #comments-section {
+  background-color: #2d2d2d;
+  border-color: #444;
+}
+
+body.dark-mode .comment-form select,
+body.dark-mode .comment-form textarea {
+  background-color: #1e1e1e;
+  color: #e8e8e8;
+  border-color: #444;
+}
+
+body.dark-mode .comment-form label {
+  color: #e8e8e8;
+}
+
+body.dark-mode .comment-author {
+  color: #4a9d6f;
+}
+
+body.dark-mode .comment-login-msg {
+  background-color: #1e1e1e;
+  border-color: #4a9d6f;
+  color: #e8e8e8;
 }

@@ -10,6 +10,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   let todosLosProductos = [];
 
   /**
+   * Obtiene la ruta de imagen correcta.
+   * Verifica si la imagen existe, si no usa default.jpg
+   */
+  function obtenerImagenRuta(imagen) {
+    if (!imagen) return '../../img/plantas/default.jpg';
+    const ruta = imagen.startsWith('../../img/') ? imagen : `../../img/plantas/${imagen}`;
+    // Creamos una imagen temporal para verificar si existe
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(ruta);
+      img.onerror = () => resolve('../../img/plantas/default.jpg');
+      img.src = ruta;
+    });
+  }
+
+  /**
    * Carga los datos del producto desde product_data.json
    */
   const cargarProductos = async () => {
@@ -64,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Muestra los detalles del ramo en la página
    */
-  const mostrarDetalleRamo = (ramo) => {
+  const mostrarDetalleRamo = async (ramo) => {
     if (!ramo) {
       mostrarError('El ramo no encontrado.');
       return;
@@ -72,8 +88,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     productoActual = ramo;
 
+    // Obtener imagen verificada
+    const imagenRuta = await obtenerImagenRuta(ramo.imagen);
+
     // Actualizar imagen y título
-    document.getElementById('ramo-img').src = ramo.imagen;
+    document.getElementById('ramo-img').src = imagenRuta;
     document.getElementById('ramo-img').alt = ramo.nombre;
     document.getElementById('ramo-nombre').textContent = ramo.nombre;
 
@@ -129,7 +148,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /**
    * Muestra los ramos relacionados en la cuadrícula
    */
-  const mostrarRamosRelacionados = (ramos) => {
+  const mostrarRamosRelacionados = async (ramos) => {
     const grid = document.getElementById('ramos-relacionados-grid');
     grid.innerHTML = '';
 
@@ -138,16 +157,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    ramos.forEach(ramo => {
-      const card = crearTarjetaProducto(ramo);
+    for (const ramo of ramos) {
+      const card = await crearTarjetaProducto(ramo);
       grid.appendChild(card);
-    });
+    }
   };
 
   /**
    * Crea una tarjeta de producto HTML
    */
-  const crearTarjetaProducto = (ramo) => {
+  const crearTarjetaProducto = async (ramo) => {
     const article = document.createElement('article');
     article.className = 'producto-card';
     article.setAttribute('data-es-ramo', 'true');
@@ -166,8 +185,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     badgeTem.className = `badge badge-temporada ${ramo.temporada}`;
     badgeTem.textContent = capitalizar(ramo.temporada);
 
+    // Obtener imagen verificada
+    const imagenRuta = await obtenerImagenRuta(ramo.imagen);
     const img = document.createElement('img');
-    img.src = ramo.imagen;
+    img.src = imagenRuta;
     img.alt = ramo.nombre;
 
     imagenDiv.appendChild(badgeDif);

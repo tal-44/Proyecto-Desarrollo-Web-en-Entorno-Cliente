@@ -23,6 +23,8 @@
       </nav>
       <!-- Botón del carrito: muestra un icono y un contador de artículos -->
       <div class="user-actions">
+        <!-- Aquí mostraremos el estado del usuario: enlaces de login/registro o el nombre y un enlace de cierre de sesión -->
+        <div id="user-info" class="user-info"></div>
         <button id="open-cart" class="cart-button" aria-label="Ver carrito">
           <span class="cart-icon">&#x1f6cd;</span>
           <span id="cart-count" class="cart-count">0</span>
@@ -30,6 +32,11 @@
       </div>
     </div>
   </header>
+
+  <!-- Botón de modo oscuro flotante -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    Modo Oscuro
+  </button>
 
   <main class="site-main">
     <!-- Panel de filtros lateral -->
@@ -73,159 +80,11 @@
       <header class="catalogo-header">
         <h1 id="titulo-catalogo">Todas las Plantas</h1>
         <p id="texto-filtro-actual">Mostrando: Todas las plantas</p>
+        <!-- Buscador dinámico para filtrar por nombre -->
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar por nombre...">
       </header>
       <div class="productos-grid" id="productos-grid">
-        <!-- Tarjetas de producto estáticas para Hito 1 -->
-        <article class="producto-card" data-ramos="no" data-temporada="verano" data-dificultad="facil" data-nombre="Anturio Rojo" data-precio="33.00" data-imagen="img/plantas/anturio.jpg">
-          <div class="producto-imagen">
-            <!-- Etiquetas que muestran la temporada y la dificultad -->
-            <span class="badge badge-dificultad facil">Fácil</span>
-            <span class="badge badge-temporada verano">Verano</span>
-            <img src="img/plantas/anturio.jpg" alt="Anturio Rojo">
-          </div>
-          <div class="producto-info">
-            <h3>Anturio Rojo</h3>
-            <p class="nombre-cientifico">Anthurium andraeanum</p>
-            <p class="precio">€33.00</p>
-            <!-- Botón para añadir al carrito -->
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-        <article class="producto-card" data-ramos="no" data-temporada="verano" data-dificultad="media" data-nombre="Planta de Ejemplo" data-precio="20.00" data-imagen="img/plantas/default.jpg">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad media">Media</span>
-            <span class="badge badge-temporada verano">Verano</span>
-            <img src="img/plantas/default.jpg" alt="Planta de ejemplo">
-          </div>
-          <div class="producto-info">
-            <h3>Planta de Ejemplo</h3>
-            <p class="nombre-cientifico">Lorem ipsum</p>
-            <p class="precio">€20.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-        <article class="producto-card" data-ramos="si" data-temporada="otoño" data-dificultad="facil" data-nombre="Ramo Pre-hecho" data-precio="40.00" data-imagen="img/plantas/default.jpg">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad facil">Fácil</span>
-            <span class="badge badge-temporada otoño">Otoño</span>
-            <img src="img/plantas/default.jpg" alt="Ramo Pre-hecho">
-          </div>
-          <div class="producto-info">
-            <h3>Ramo Pre-hecho</h3>
-            <p class="nombre-cientifico">Mix de flores</p>
-            <p class="precio">€40.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Suculenta decorativa -->
-        <article class="producto-card" data-ramos="no" data-temporada="todo_año" data-dificultad="facil" data-nombre="Suculenta Decorativa" data-precio="12.00" data-imagen="img/plantas/succulent.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad facil">Fácil</span>
-            <span class="badge badge-temporada todo_año">Todo el año</span>
-            <img src="img/plantas/succulent.png" alt="Suculenta decorativa">
-          </div>
-          <div class="producto-info">
-            <h3>Suculenta Decorativa</h3>
-            <p class="nombre-cientifico">Echeveria</p>
-            <p class="precio">€12.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Bouquet colorido (ramos) -->
-        <article class="producto-card" data-ramos="si" data-temporada="primavera" data-dificultad="media" data-nombre="Bouquet Colorido" data-precio="45.00" data-imagen="img/plantas/bouquet.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad media">Media</span>
-            <span class="badge badge-temporada primavera">Primavera</span>
-            <img src="img/plantas/bouquet.png" alt="Bouquet colorido">
-          </div>
-          <div class="producto-info">
-            <h3>Bouquet Colorido</h3>
-            <p class="nombre-cientifico">Rosas y Lirios</p>
-            <p class="precio">€45.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Planta interior abstracta -->
-        <article class="producto-card" data-ramos="no" data-temporada="invierno" data-dificultad="media" data-nombre="Planta Interior" data-precio="25.00" data-imagen="img/plantas/indoor.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad media">Media</span>
-            <span class="badge badge-temporada invierno">Invierno</span>
-            <img src="img/plantas/indoor.png" alt="Planta de interior">
-          </div>
-          <div class="producto-info">
-            <h3>Planta Interior</h3>
-            <p class="nombre-cientifico">Philodendron</p>
-            <p class="precio">€25.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Bonsai (dificultad alta) -->
-        <!--
-          En esta tarjeta añadimos un ejemplo con dificultad "difícil" para que
-          el filtro de dificultad tenga contenido diverso. La imagen se ha
-          generado de manera ilustrativa y está almacenada en img/plantas/bonsai.png.
-          Al fijar data-temporada="primavera" indicamos que esta planta es
-          especialmente apta para la primavera. data-ramos="no" indica que no
-          se trata de un ramo.
-        -->
-        <article class="producto-card" data-ramos="no" data-temporada="primavera" data-dificultad="dificil" data-nombre="Bonsai Decorativo" data-precio="30.00" data-imagen="img/plantas/bonsai.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad dificil">Difícil</span>
-            <span class="badge badge-temporada primavera">Primavera</span>
-            <img src="img/plantas/bonsai.png" alt="Bonsai en maceta">
-          </div>
-          <div class="producto-info">
-            <h3>Bonsai Decorativo</h3>
-            <p class="nombre-cientifico">Ficus Microcarpa</p>
-            <p class="precio">€30.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Cactus con flores (otoño, fácil) -->
-        <!--
-          Un cactus es una buena opción de cuidado sencillo. data-temporada="otoño"
-          complementa los filtros de temporada existentes y data-dificultad
-          indica que es fácil de cuidar.
-        -->
-        <article class="producto-card" data-ramos="no" data-temporada="otoño" data-dificultad="facil" data-nombre="Cactus Florido" data-precio="15.00" data-imagen="img/plantas/cactus.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad facil">Fácil</span>
-            <span class="badge badge-temporada otoño">Otoño</span>
-            <img src="img/plantas/cactus.png" alt="Cactus en flor">
-          </div>
-          <div class="producto-info">
-            <h3>Cactus Florido</h3>
-            <p class="nombre-cientifico">Mammillaria hahniana</p>
-            <p class="precio">€15.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
-
-        <!-- Tarjeta adicional: Orquídea (primavera, media) -->
-        <!--
-          Esta tarjeta muestra una orquídea con dificultad media y temporada
-          de primavera. Sirve para ampliar la diversidad de ejemplos en el
-          catálogo, de manera que los filtros tengan más tarjetas sobre las
-          que actuar.
-        -->
-        <article class="producto-card" data-ramos="no" data-temporada="primavera" data-dificultad="media" data-nombre="Orquídea Exótica" data-precio="28.00" data-imagen="img/plantas/orchid_actual.png">
-          <div class="producto-imagen">
-            <span class="badge badge-dificultad media">Media</span>
-            <span class="badge badge-temporada primavera">Primavera</span>
-            <img src="img/plantas/orchid_actual.png" alt="Orquídea rosada">
-          </div>
-          <div class="producto-info">
-            <h3>Orquídea Exótica</h3>
-            <p class="nombre-cientifico">Phalaenopsis</p>
-            <p class="precio">€28.00</p>
-            <button class="add-to-cart">Añadir a la cesta</button>
-          </div>
-        </article>
+        <!-- Los productos se cargan dinámicamente desde product_data.json -->
       </div>
       <div id="sin-resultados" class="sin-resultados" style="display:none;">
         <p>No se encontraron plantas con los filtros seleccionados.</p>
@@ -237,8 +96,12 @@
     <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
   </footer>
 
-  <script src="script.js"></script>
-  <!-- Script de carrito: gestiona la lógica del carrito en todas las páginas -->
+  <!-- Librería SweetAlert2 para notificaciones -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Scripts propios -->
   <script src="cart.js"></script>
+  <script src="dark-mode.js"></script>
+  <script src="script.js"></script>
+  <script src="user.js"></script>
 </body>
 </html>

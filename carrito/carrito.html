@@ -52,6 +52,7 @@
         <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
       </nav>
       <div class="user-actions">
+        <div id="user-info" class="user-info"></div>
         <button id="open-cart" class="cart-button" aria-label="Ver carrito">
           <span class="cart-icon">&#x1f6cd;</span>
           <span id="cart-count" class="cart-count">0</span>
@@ -59,6 +60,10 @@
       </div>
     </div>
   </header>
+  <!-- Botón de modo oscuro flotante -->
+  <button id="dark-mode-toggle" class="dark-mode-toggle" aria-label="Cambiar modo oscuro">
+    Modo Oscuro
+  </button>
 
   <main class="site-main">
     <section class="catalogo">
@@ -80,11 +85,15 @@
 
   <!-- Script del carrito: se encarga de leer localStorage y pintar la tabla -->
   <script src="../cart.js"></script>
+  <!-- Script de usuario: gestiona la sesión en la cabecera -->
+  <script src="../user.js"></script>
   <script>
     // Al cargar esta página, renderizamos el resumen del carrito
     document.addEventListener('DOMContentLoaded', () => {
       renderCartPage();
     });
   </script>
+  <!-- Script de modo oscuro global -->
+  <script src="../dark-mode.js"></script>
 </body>
 </html>

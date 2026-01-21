@@ -1,17 +1,115 @@
 /*
  * script.js
  * Este archivo implementa la lógica básica de interacción para el Hito 1.
- * Controla la apertura y cierre de los menús desplegables de filtros,
- * selecciona opciones y filtra las tarjetas de productos según los
- * criterios elegidos. El objetivo es practicar la manipulación del DOM
- * utilizando solamente JavaScript básico.
+ * Carga todos los productos desde product_data.json, los renderiza en el catálogo,
+ * y controla la apertura/cierre de menús desplegables de filtros,
+ * selección de opciones y filtrado de productos según criterios elegidos.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   /*
-   * Cuando el documento HTML termina de cargarse, ejecutamos esta función.
-   * Aquí centralizamos toda la lógica de interacción del catálogo.
+   * Cuando el documento HTML termina de cargarse, cargamos los productos
+   * desde el JSON y ejecutamos la lógica de interacción del catálogo.
    */
+
+  let todosLosProductos = [];
+
+  /**
+   * Obtiene la ruta de imagen correcta.
+   * Verifica si la imagen existe, si no usa default.jpg
+   */
+  function obtenerImagenRuta(imagen) {
+    if (!imagen) return 'img/plantas/default.jpg';
+    const ruta = imagen.startsWith('img/') ? imagen : `img/plantas/${imagen}`;
+    // Creamos una imagen temporal para verificar si existe
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(ruta);
+      img.onerror = () => resolve('img/plantas/default.jpg');
+      img.src = ruta;
+    });
+  }
+
+  /**
+   * Carga todos los productos desde product_data.json
+   */
+  async function cargarProductos() {
+    try {
+      const response = await fetch('product_data.json');
+      if (!response.ok) throw new Error('Error al cargar los productos');
+      const data = await response.json();
+      todosLosProductos = data.productos || [];
+    } catch (err) {
+      console.error('Error cargando productos:', err);
+      todosLosProductos = [];
+    }
+  }
+
+  /**
+   * Renderiza los productos en el grid del catálogo
+   */
+  async function renderizarProductos(productos) {
+    const grid = document.getElementById('productos-grid');
+    if (!grid) return;
+    
+    // Limpiamos las tarjetas estáticas del HTML
+    grid.innerHTML = '';
+    
+    for (const prod of productos) {
+      const article = document.createElement('article');
+      article.className = 'producto-card';
+      article.setAttribute('data-ramos', prod.es_para_ramo ? 'si' : 'no');
+      article.setAttribute('data-temporada', prod.temporada);
+      article.setAttribute('data-dificultad', prod.dificultad.toLowerCase());
+      article.setAttribute('data-nombre', prod.nombre);
+      article.style.cursor = 'pointer';
+      
+      // Obtener ruta de imagen verificada
+      const imagenRuta = await obtenerImagenRuta(prod.imagen);
+      
+      // HTML de la tarjeta
+      article.innerHTML = `
+        <div class="producto-imagen">
+          <span class="badge badge-dificultad ${prod.dificultad.toLowerCase()}">${capitalizar(prod.dificultad)}</span>
+          <span class="badge badge-temporada ${prod.temporada}">${capitalizar(prod.temporada)}</span>
+          <img src="${imagenRuta}" alt="${prod.nombre}">
+        </div>
+        <div class="producto-info">
+          <h3>${prod.nombre}</h3>
+          <p class="nombre-cientifico">${prod.nombre_cientifico || ''}</p>
+          <p class="precio">€${parseFloat(prod.precio).toFixed(2)}</p>
+          <button class="add-to-cart">Añadir a la cesta</button>
+        </div>
+      `;
+      
+      grid.appendChild(article);
+    }
+    
+    // Reasignar event listeners a las nuevas tarjetas
+    asignarEventosTarjetas();
+  }
+
+  /**
+   * Capitaliza la primera letra de una cadena
+   */
+  function capitalizar(texto) {
+    if (!texto) return '';
+    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+  }
+
+  /**
+   * Buscador de texto.  Si existe un input con id "search-input",
+   * escuchamos el evento `input` para filtrar por nombre.  El término
+   * introducido se tendrá en cuenta en filtrarProductos() junto con
+   * los demás filtros.  Este código no afectará a páginas que no
+   * tengan dicho elemento.
+   */
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      filtrarProductos();
+    });
+  }
 
   /**
    * Objeto que almacena el estado actual de los filtros. Cada propiedad
@@ -170,6 +268,17 @@ document.addEventListener('DOMContentLoaded', () => {
       if (filtros.dificultad !== 'todas' && dificultad !== filtros.dificultad) {
         mostrar = false;
       }
+
+      // 4) Filtro por nombre (buscador).  Si hay un input de búsqueda
+      // visible en la página, comprobamos que el nombre de la tarjeta
+      // incluya el término introducido (ignorando mayúsculas/minúsculas).
+      if (searchInput && searchInput.value.trim() !== '') {
+        const termino = searchInput.value.trim().toLowerCase();
+        const nombreProducto = (card.dataset.nombre || '').toLowerCase();
+        if (!nombreProducto.includes(termino)) {
+          mostrar = false;
+        }
+      }
       // Si todos los filtros se cumplen, mostramos la tarjeta; de lo contrario, la ocultamos
       // Cuando se oculta, establecemos display en 'none'. Cuando se muestra,
       // utilizamos una cadena vacía para que se apliquen los estilos CSS por
@@ -184,4 +293,47 @@ document.addEventListener('DOMContentLoaded', () => {
       mensaje.style.display = visibles === 0 ? 'block' : 'none';
     }
   }
+
+  /**
+   * Hacemos que toda la tarjeta de producto sea clicable para ir a la vista
+   * detallada. Si el usuario hace clic en el botón "Añadir a la cesta",
+   * no redireccionamos.
+   */
+  function asignarEventosTarjetas() {
+    document.querySelectorAll('.producto-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        // Si el clic proviene del botón de añadir al carrito, no hacemos nada
+        if (e.target.closest('.add-to-cart')) return;
+        const nombre = card.dataset.nombre;
+        if (nombre) {
+          // Almacenamos el producto actual en sessionStorage
+          const producto = todosLosProductos.find(p => p.nombre === nombre);
+          if (producto) {
+            const prodData = {
+              nombre: producto.nombre,
+              precio: producto.precio,
+              imagen: producto.imagen,
+              temporada: producto.temporada,
+              dificultad: producto.dificultad.toLowerCase(),
+              es_ramo: producto.es_para_ramo,
+              nombre_cientifico: producto.nombre_cientifico || '',
+              descripcion: producto.descripcion || ''
+            };
+            sessionStorage.setItem('productoActual', JSON.stringify(prodData));
+          }
+          // Codificamos el nombre para pasarlo como parámetro en la URL
+          const param = encodeURIComponent(nombre);
+          window.location.href = `product.html?nombre=${param}`;
+        }
+      });
+    });
+  }
+
+  // ===== INICIALIZACIÓN =====
+  // Cargar productos desde JSON y renderizar en catálogo
+  (async () => {
+    await cargarProductos();
+    renderizarProductos(todosLosProductos);
+    filtrarProductos();
+  })();
 });

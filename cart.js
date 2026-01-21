@@ -1,240 +1,292 @@
 /*
  * cart.js
  *
- * Este archivo centraliza la lógica del carrito de compras. Está
- * pensado para utilizarse en todas las páginas del proyecto. Se
- * encarga de almacenar los productos seleccionados en localStorage,
- * actualizar el contador del carrito en la cabecera, gestionar
- * eventos de añadir al carrito y renderizar el resumen del carrito
- * en la página dedicada (carrito.html). Todo el código está
- * comentado para facilitar su comprensión a estudiantes de nivel
- * básico.
+ * Implements a simple shopping cart stored in localStorage.  The cart is
+ * shared across pages – functions defined here are attached to the
+ * `window` object so that other scripts can add items to the cart.
+ * When the user clicks the cart icon in the header the cart overlay
+ * appears, listing the current items, quantities and the total.  The
+ * overlay allows incrementing/decrementing quantities and removing
+ * items.  All changes persist immediately to localStorage.
  */
 
-// Ejecutamos la lógica básica cuando se carga el DOM. Esta
-// función comprueba si existen botones de añadir al carrito y el
-// botón de apertura del carrito. También actualiza el contador
-// inicial.
 document.addEventListener('DOMContentLoaded', () => {
-  updateCartCount();
-  setupAddToCartButtons();
-  setupCartButton();
-  setupVaciarButton();
-});
+  // Internal cart array.  Each entry is of the form
+  // { name: string, price: number, image: string, qty: number }
+  let cart = loadCart();
 
-/**
- * Carga el carrito desde localStorage. Si no existe, devuelve un
- * array vacío. Cada elemento del carrito es un objeto con las
- * propiedades: nombre (string), precio (number), cantidad (number)
- * e imagen (string) para mostrar una miniatura en el resumen.
- *
- * @returns {Array} Array de productos en el carrito
- */
-function loadCart() {
-  const data = localStorage.getItem('cartItems');
-  try {
-    return data ? JSON.parse(data) : [];
-  } catch (e) {
-    console.error('Error al leer el carrito:', e);
+  // Create overlay when first loaded
+  const overlay = createOverlay();
+  document.body.appendChild(overlay);
+
+  // Update count on page load
+  updateCartCount();
+
+  // Attach open cart behaviour to button if present
+  const cartBtn = document.getElementById('open-cart');
+  if (cartBtn) {
+    cartBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openCart();
+    });
+  }
+
+  /**
+   * Reads the cart from localStorage.  Returns an empty array if no
+   * cart is stored.
+   */
+  function loadCart() {
+    const saved = localStorage.getItem('cart');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Ensure each item has required properties
+        return Array.isArray(parsed) ? parsed.map(item => ({
+          name: item.name,
+          price: parseFloat(item.price),
+          image: item.image,
+          qty: parseInt(item.qty, 10) || 1
+        })) : [];
+      } catch (err) {
+        console.error('Error parsing cart from localStorage', err);
+      }
+    }
     return [];
   }
-}
 
-/**
- * Guarda el carrito en localStorage. Se utiliza después de
- * modificar las cantidades o añadir productos.
- *
- * @param {Array} cart Array de productos a guardar
- */
-function saveCart(cart) {
-  localStorage.setItem('cartItems', JSON.stringify(cart));
-}
-
-/**
- * Actualiza el contador del carrito en la cabecera. Suma las
- * cantidades de cada producto y muestra ese valor en el span con
- * id "cart-count". Si no hay artículos, oculta el contador para
- * que no aparezca un cero.
- */
-function updateCartCount() {
-  const countSpan = document.getElementById('cart-count');
-  if (!countSpan) return;
-  const cart = loadCart();
-  const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-  if (totalItems > 0) {
-    countSpan.textContent = totalItems;
-    countSpan.style.display = 'inline-block';
-  } else {
-    countSpan.textContent = '0';
-    countSpan.style.display = 'none';
+  /**
+   * Saves the cart to localStorage.
+   */
+  function saveCart() {
+    localStorage.setItem('cart', JSON.stringify(cart));
   }
-}
 
-/**
- * Configura los botones de añadir al carrito. Recorre todas las
- * etiquetas con clase "add-to-cart" y asigna un manejador que
- * obtiene los datos del producto a partir de su tarjeta
- * correspondiente. Esta función es segura de ejecutar incluso en
- * páginas donde no existan dichos botones.
- */
-function setupAddToCartButtons() {
-  const buttons = document.querySelectorAll('.add-to-cart');
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // localizamos el contenedor .producto-card más cercano
-      const card = btn.closest('.producto-card');
-      if (!card) return;
-      const nombre = card.dataset.nombre;
-      const precio = parseFloat(card.dataset.precio);
-      const imagen = card.dataset.imagen;
-      addItemToCart(nombre, precio, imagen);
+  /**
+   * Updates the small number displayed on the cart icon.  Sums the
+   * quantities of all items.
+   */
+  function updateCartCount() {
+    const countEl = document.getElementById('cart-count');
+    if (!countEl) return;
+    let total = 0;
+    cart.forEach(item => {
+      total += item.qty;
     });
-  });
-}
-
-/**
- * Añade un producto al carrito. Si el producto ya existe (según
- * su nombre), incrementa la cantidad; en caso contrario, lo
- * inserta con cantidad 1. Después se guarda el carrito y se
- * actualiza el contador.
- *
- * @param {string} nombre Nombre del producto
- * @param {number} precio Precio unitario del producto
- * @param {string} imagen Ruta de la imagen para mostrar en el carrito
- */
-function addItemToCart(nombre, precio, imagen) {
-  const cart = loadCart();
-  // Buscamos si ya existe un producto con el mismo nombre
-  const existing = cart.find(item => item.nombre === nombre);
-  if (existing) {
-    existing.cantidad += 1;
-  } else {
-    cart.push({ nombre, precio, cantidad: 1, imagen });
+    countEl.textContent = total;
   }
-  saveCart(cart);
-  updateCartCount();
-}
 
-/**
- * Configura el botón del carrito en la cabecera. Al hacer clic,
- * redirecciona a la página "carrito.html". La ruta se calcula
- * dinámicamente basada en la ubicación actual de la página.
- */
-function setupCartButton() {
-  const cartButton = document.getElementById('open-cart');
-  if (cartButton) {
-    cartButton.addEventListener('click', () => {
-      // Determinar la ruta correcta según la ubicación actual
-      const currentPath = window.location.pathname;
-      let carritoPath;
-      
-      if (currentPath.includes('/ramos/vista_ramo/')) {
-        // Desde ramos/vista_ramo/ -> subir 2 niveles
-        carritoPath = '../../carrito/carrito.html';
-      } else if (currentPath.includes('/ramos/')) {
-        // Desde ramos/ -> subir 1 nivel
-        carritoPath = '../carrito/carrito.html';
-      } else if (currentPath.includes('/test/')) {
-        // Desde test/ -> subir 1 nivel
-        carritoPath = '../carrito/carrito.html';
-      } else if (currentPath.includes('/carrito/')) {
-        // Ya estamos en carrito/
-        carritoPath = 'carrito.html';
-      } else {
-        // Desde la raíz (index.html)
-        carritoPath = 'carrito/carrito.html';
-      }
-      
-      window.location.href = carritoPath;
+  /**
+   * Creates the cart overlay DOM structure.  Returns the root
+   * element.  All event handlers for closing and modifying the cart
+   * are attached here.
+   */
+  function createOverlay() {
+    const overlayEl = document.createElement('div');
+    overlayEl.className = 'cart-overlay';
+
+    const modal = document.createElement('div');
+    modal.className = 'cart-modal';
+
+    // Header
+    const header = document.createElement('div');
+    header.className = 'cart-header';
+    const title = document.createElement('h2');
+    title.textContent = 'Tu cesta';
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'cart-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Cerrar carrito');
+    closeBtn.addEventListener('click', () => {
+      closeCart();
     });
-  }
-}
+    header.appendChild(title);
+    header.appendChild(closeBtn);
 
-/**
- * Configura el botón de vaciar carrito en la página de carrito.
- * El botón debe tener id "vaciar-carrito". Al pulsarlo, se
- * limpia el array del carrito, se actualiza el contador y se
- * vuelve a renderizar la página del carrito para reflejar los
- * cambios. Si no existe dicho botón, la función retorna sin
- * hacer nada.
- */
-function setupVaciarButton() {
-  const vaciarBtn = document.getElementById('vaciar-carrito');
-  if (vaciarBtn) {
-    vaciarBtn.addEventListener('click', () => {
-      localStorage.removeItem('cartItems');
+    // Items container
+    const itemsContainer = document.createElement('div');
+    itemsContainer.className = 'cart-items';
+
+    // Summary
+    const summary = document.createElement('div');
+    summary.className = 'cart-summary';
+    const totalText = document.createElement('p');
+    totalText.id = 'cart-total';
+    summary.appendChild(totalText);
+    const actions = document.createElement('div');
+    actions.className = 'cart-actions';
+    const clearBtn = document.createElement('button');
+    clearBtn.textContent = 'Vaciar';
+    clearBtn.addEventListener('click', () => {
+      cart = [];
+      saveCart();
+      renderCart();
       updateCartCount();
-      // Si estamos en la página del carrito, volvemos a pintar la tabla
-      if (typeof renderCartPage === 'function') {
-        renderCartPage();
-      }
     });
-  }
-}
+    const checkoutBtn = document.createElement('button');
+    checkoutBtn.textContent = 'Comprar';
+    checkoutBtn.addEventListener('click', () => {
+      // For this demo we simply clear the cart and show a thank you alert
+      cart = [];
+      saveCart();
+      renderCart();
+      updateCartCount();
+      Swal.fire({
+        icon: 'success',
+        title: '¡Gracias por tu compra!',
+        text: 'Tu pedido se ha procesado correctamente.',
+        toast: true,
+        position: 'bottom-end',
+        timer: 3000,
+        showConfirmButton: false,
+        background: document.body.classList.contains('dark-mode') ? '#2d2d2d' : '#ffffff',
+        color: document.body.classList.contains('dark-mode') ? '#e8e8e8' : '#333333'
+      });
+      closeCart();
+    });
+    actions.appendChild(clearBtn);
+    actions.appendChild(checkoutBtn);
+    summary.appendChild(actions);
 
-/**
- * Renderiza la tabla de resumen del carrito. Esta función debe
- * ejecutarse en la página carrito.html cuando el DOM esté listo.
- * Obtiene el div con id "cart-container" y lo rellena con una
- * tabla que muestra cada producto, su cantidad, el precio
- * unitario y el subtotal (cantidad * precio). También calcula el
- * total de la compra. Si el carrito está vacío, se muestra un
- * mensaje indicando que no hay artículos.
- */
-function renderCartPage() {
-  const container = document.getElementById('cart-container');
-  if (!container) return;
-  const cart = loadCart();
-  // Limpiamos el contenedor
-  container.innerHTML = '';
-  if (cart.length === 0) {
-    const msg = document.createElement('p');
-    msg.textContent = 'Tu carrito está vacío. Añade productos desde el catálogo.';
-    container.appendChild(msg);
-    return;
-  }
-  // Creamos la tabla
-  const table = document.createElement('table');
-  table.className = 'cart-table';
-  // Encabezado
-  const thead = document.createElement('thead');
-  thead.innerHTML = `
-    <tr>
-      <th>Producto</th>
-      <th>Cantidad</th>
-      <th>Precio</th>
-      <th>Subtotal</th>
-    </tr>`;
-  table.appendChild(thead);
-  // Cuerpo de la tabla
-  const tbody = document.createElement('tbody');
-  let total = 0;
-  cart.forEach(item => {
-    const subtotal = item.precio * item.cantidad;
-    total += subtotal;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><img src="${item.imagen}" alt="${item.nombre}" style="width:40px;height:40px;object-fit:cover;margin-right:0.5rem;vertical-align:middle;">${item.nombre}</td>
-      <td>${item.cantidad}</td>
-      <td>€${item.precio.toFixed(2)}</td>
-      <td>€${subtotal.toFixed(2)}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-  table.appendChild(tbody);
-  // Fila de total
-  const tfoot = document.createElement('tfoot');
-  tfoot.innerHTML = `
-    <tr>
-      <td colspan="3" style="text-align:right;font-weight:bold;">Total:</td>
-      <td style="font-weight:bold;">€${total.toFixed(2)}</td>
-    </tr>`;
-  table.appendChild(tfoot);
-  container.appendChild(table);
-}
+    modal.appendChild(header);
+    modal.appendChild(itemsContainer);
+    modal.appendChild(summary);
+    overlayEl.appendChild(modal);
 
-// Hacemos que las funciones principales estén disponibles en el
-// objeto global para poder ser llamadas desde HTML (carrito.html) y desde scripts dinámicos
-window.renderCartPage = renderCartPage;
-window.addItemToCart = addItemToCart;
-window.updateCartCount = updateCartCount;
+    return overlayEl;
+  }
+
+  /**
+   * Renders the cart items and total in the modal.  Called whenever
+   * the cart contents change.
+   */
+  function renderCart() {
+    const overlayEl = document.querySelector('.cart-overlay');
+    if (!overlayEl) return;
+    const itemsContainer = overlayEl.querySelector('.cart-items');
+    const totalEl = overlayEl.querySelector('#cart-total');
+    // Clear previous content
+    itemsContainer.innerHTML = '';
+    let total = 0;
+    if (cart.length === 0) {
+      const emptyMsg = document.createElement('p');
+      emptyMsg.className = 'text-center';
+      emptyMsg.textContent = 'Tu cesta está vacía.';
+      itemsContainer.appendChild(emptyMsg);
+    } else {
+      cart.forEach((item, index) => {
+        total += item.price * item.qty;
+        const row = document.createElement('div');
+        row.className = 'cart-item';
+        // Image
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.name;
+        row.appendChild(img);
+        // Details
+        const details = document.createElement('div');
+        details.className = 'cart-item-details';
+        const nameEl = document.createElement('h4');
+        nameEl.textContent = item.name;
+        const priceEl = document.createElement('p');
+        priceEl.textContent = `€${parseFloat(item.price).toFixed(2)}`;
+        details.appendChild(nameEl);
+        details.appendChild(priceEl);
+        row.appendChild(details);
+        // Actions
+        const actions = document.createElement('div');
+        actions.className = 'cart-item-actions';
+        // Quantity controls
+        const qtyWrapper = document.createElement('div');
+        qtyWrapper.className = 'cart-qty';
+        const minusBtn = document.createElement('button');
+        minusBtn.textContent = '−';
+        minusBtn.addEventListener('click', () => {
+          if (item.qty > 1) {
+            item.qty -= 1;
+          } else {
+            // remove item if quantity goes to zero
+            cart.splice(index, 1);
+          }
+          saveCart();
+          renderCart();
+          updateCartCount();
+        });
+        const qtySpan = document.createElement('span');
+        qtySpan.textContent = item.qty;
+        const plusBtn = document.createElement('button');
+        plusBtn.textContent = '+';
+        plusBtn.addEventListener('click', () => {
+          item.qty += 1;
+          saveCart();
+          renderCart();
+          updateCartCount();
+        });
+        qtyWrapper.appendChild(minusBtn);
+        qtyWrapper.appendChild(qtySpan);
+        qtyWrapper.appendChild(plusBtn);
+        actions.appendChild(qtyWrapper);
+        // Remove link
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'cart-remove';
+        removeBtn.textContent = 'Eliminar';
+        removeBtn.addEventListener('click', () => {
+          cart.splice(index, 1);
+          saveCart();
+          renderCart();
+          updateCartCount();
+        });
+        actions.appendChild(removeBtn);
+        row.appendChild(actions);
+        itemsContainer.appendChild(row);
+      });
+    }
+    totalEl.textContent = `Total: €${total.toFixed(2)}`;
+  }
+
+  /**
+   * Shows the cart overlay and renders current items.
+   */
+  function openCart() {
+    const overlayEl = document.querySelector('.cart-overlay');
+    if (overlayEl) {
+      renderCart();
+      overlayEl.style.display = 'flex';
+    }
+  }
+
+  /**
+   * Hides the cart overlay.
+   */
+  function closeCart() {
+    const overlayEl = document.querySelector('.cart-overlay');
+    if (overlayEl) {
+      overlayEl.style.display = 'none';
+    }
+  }
+
+  /**
+   * Adds an item to the cart.  If the item already exists (matching
+   * name), its quantity increases.  Exposed globally so other modules
+   * can call window.addItemToCart(name, price, image).
+   *
+   * @param {string} name – product name
+   * @param {number|string} price – product price
+   * @param {string} image – URL or path to product image
+   */
+  function addItemToCart(name, price, image) {
+    price = parseFloat(price);
+    const existing = cart.find(item => item.name === name);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.push({ name, price, image, qty: 1 });
+    }
+    saveCart();
+    updateCartCount();
+  }
+
+  // Expose public functions on the window object
+  window.addItemToCart = addItemToCart;
+  window.openCart = openCart;
+  window.closeCart = closeCart;
+});
