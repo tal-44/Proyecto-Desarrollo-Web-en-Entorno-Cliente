@@ -91,7 +91,6 @@ window.savePurchaseToHistory = function(cartItems, total) {
   localStorage.setItem('purchases', JSON.stringify(purchases));
 
   // Disparar evento personalizado para actualizar el gráfico de preferencias
-  // Esto permite que la página de history.html actualice el gráfico automáticamente
   window.dispatchEvent(new CustomEvent('purchaseCompleted', {
     detail: { purchase: purchase }
   }));
@@ -140,6 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentUser = getCurrentUser();
   const authRequiredDiv = document.getElementById('auth-required');
   const historyContentDiv = document.getElementById('history-content');
+
+  // Si no estamos en la página de historial, no hacer nada
+  if (!authRequiredDiv || !historyContentDiv) {
+    return;
+  }
 
   if (!currentUser || !currentUser.username) {
     // Usuario no autenticado

@@ -142,7 +142,6 @@ function handleRegister(e) {
   const newUser = { username, password };
   users.push(newUser);
   saveUsers(users);
-  console.log('Nuevo usuario registrado:', username);
   // Establecemos al nuevo usuario como el usuario actual
   localStorage.setItem('currentUser', JSON.stringify(newUser));
   // Limpiamos los campos del formulario
@@ -202,17 +201,14 @@ function handleLogin(e) {
   
   if (!user) {
     showError(errorP, 'El usuario no existe. Por favor, regístrate primero.');
-    console.log('Usuario no encontrado:', username);
     return;
   }
   if (user.password !== password) {
     showError(errorP, 'Contraseña incorrecta.');
-    console.log('Contraseña incorrecta para usuario:', username);
     return;
   }
   // Credenciales correctas: almacenamos el usuario actual
   localStorage.setItem('currentUser', JSON.stringify(user));
-  console.log('Login exitoso para usuario:', username);
   // Limpiamos los campos
   usernameInput.value = '';
   passwordInput.value = '';

@@ -111,18 +111,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation(); // Evitar que se propague al click de la tarjeta
 
-      console.log('Click en botón añadir al carrito:', ramo.nombre);
-      console.log('window.addItemToCart está disponible:', typeof window.addItemToCart === 'function');
-
       // Usar la función global de cart.js
       if (typeof window.addItemToCart === 'function') {
-        console.log('Llamando a addItemToCart con:', {
-          nombre: ramo.nombre,
-          precio: ramo.precio,
-          imagen: `../img/plantas/${ramo.imagen}`
-        });
         window.addItemToCart(ramo.nombre, ramo.precio, `../img/plantas/${ramo.imagen}`);
-        console.log('addItemToCart ejecutado correctamente');
 
         // Mostrar confirmación con SweetAlert2
         const isDarkMode = document.body.classList.contains('dark-mode');
