@@ -48,8 +48,14 @@ document.addEventListener('DOMContentLoaded', () => {
   if (currentUser && currentUser.username) {
     // Detectar si estamos en un subdirectorio para ajustar rutas
     const currentPath = window.location.pathname;
-    const isInSubdirectory = currentPath.includes('/test/') || currentPath.includes('/ramos/');
-    const historyPath = isInSubdirectory ? '../history.html' : 'history.html';
+    
+    // Contar niveles de profundidad (cuántas carpetas desde la raíz)
+    const pathParts = currentPath.split('/').filter(p => p && !p.includes('.html'));
+    const depth = pathParts.length;
+    
+    // Generar prefijo según profundidad: '', '../', '../../', etc.
+    const prefix = depth > 0 ? '../'.repeat(depth) : '';
+    const historyPath = `${prefix}historial/history.html`;
     
     userInfoDiv.innerHTML = `
       <span class="user-name">Hola, ${currentUser.username}</span>
@@ -67,9 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Si no hay usuario, mostramos enlaces de iniciar sesión y registrarse
     // Detectamos si estamos en un subdirectorio para ajustar las rutas
     const currentPath = window.location.pathname;
-    const isInSubdirectory = currentPath.includes('/test/') || currentPath.includes('/ramos/');
-    const loginPath = isInSubdirectory ? '../login.html' : 'login.html';
-    const registerPath = isInSubdirectory ? '../register.html' : 'register.html';
+    
+    // Contar niveles de profundidad
+    const pathParts = currentPath.split('/').filter(p => p && !p.includes('.html'));
+    const depth = pathParts.length;
+    
+    // Generar prefijo según profundidad
+    const prefix = depth > 0 ? '../'.repeat(depth) : '';
+    const loginPath = `${prefix}usuarios/login.html`;
+    const registerPath = `${prefix}usuarios/register.html`;
     
     userInfoDiv.innerHTML = `
       <a href="${loginPath}" class="auth-link">Iniciar sesión</a>

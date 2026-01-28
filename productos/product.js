@@ -60,13 +60,13 @@ document.addEventListener('DOMContentLoaded', async () => {
    * @returns {Promise<string>} Promesa que resuelve a la ruta verificada
    */
   function obtenerImagenRuta(imagen) {
-    if (!imagen) return 'img/plantas/default.jpg';
-    const ruta = imagen.startsWith('img/') ? imagen : `img/plantas/${imagen}`;
+    if (!imagen) return '../img/plantas/default.jpg';
+    const ruta = imagen.startsWith('../img/') ? imagen : `../img/plantas/${imagen}`;
     // Creamos una imagen temporal para verificar si existe
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => resolve(ruta);
-      img.onerror = () => resolve('img/plantas/default.jpg');
+      img.onerror = () => resolve('../img/plantas/default.jpg');
       img.src = ruta;
     });
   }
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   async function cargarProductos() {
     try {
-      const response = await fetch('product_data.json');
+      const response = await fetch('../product_data.json');
       if (!response.ok) throw new Error('Error al cargar los productos');
       const data = await response.json();
       productos = data.productos || [];

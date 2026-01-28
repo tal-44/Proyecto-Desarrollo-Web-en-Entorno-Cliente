@@ -150,7 +150,7 @@ function handleRegister(e) {
   passwordInput.value = '';
   confirmInput.value = '';
   // Redirigimos al catálogo o mostramos mensaje de éxito
-  window.location.href = 'index.html';
+  window.location.href = '../index.html';
 }
 
 /**
@@ -217,7 +217,7 @@ function handleLogin(e) {
   usernameInput.value = '';
   passwordInput.value = '';
   // Redirigimos al catálogo
-  window.location.href = 'index.html';
+  window.location.href = '../index.html';
 }
 
 /**

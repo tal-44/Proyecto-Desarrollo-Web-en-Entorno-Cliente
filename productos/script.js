@@ -41,38 +41,39 @@ document.addEventListener('DOMContentLoaded', async () => {
    * desde el JSON y ejecutamos la lógica de interacción del catálogo.
    */
 
+  // ===== VARIABLES GLOBALES =====
   let todosLosProductos = [];
 
   /**
-   * OBTENER RUTA DE IMAGEN VERIFICADA
-   * Verifica si la imagen de un producto existe. Si no existe, retorna default.jpg
+   * OBJETO DE ESTADO DE FILTROS
+   * Almacena el estado actual de los filtros seleccionados
    * 
-   * PROCESO:
-   * 1. Si imagen está vacía: retorna directamente 'img/plantas/default.jpg'
-   * 2. Si la imagen no comienza con 'img/': añade prefijo 'img/plantas/'
-   * 3. Crea una imagen temporal y verifica si carga (img.onload/img.onerror)
-   * 4. Retorna la ruta verificada o default.jpg si falla
+   * PROPIEDADES:
+   * - ramos: 'todos' (ambos) | 'si' (solo ramos) | 'no' (solo plantas)
+   * - temporada: 'todas' (sin filtro) | 'primavera', 'verano', 'otoño', 'invierno'
+   * - dificultad: 'todas' (sin filtro) | 'facil', 'media', 'dificil'
    * 
-   * IMPORTANCIA:
-   * - Previene errores de imágenes rotas en el catálogo
-   * - Asegura que todas las imágenes enviadas al carrito existan
-   * - Se usa en renderizarProductos() para mostrar las tarjetas
-   * - Se usa en asignarEventosTarjetas() al añadir al carrito
    * 
-   * @param {string} imagen Nombre o ruta relativa de la imagen
-   * @returns {Promise<string>} Promesa que resuelve a la ruta verificada
+   * - Se actualiza cuando el usuario selecciona opciones en los filtros
+   * - Cada cambio dispara filtrarProductos() para mostrar/ocultar tarjetas
+   * 
+   * INICIAL: Todos los valores están en modo "sin filtro" (mostrar todo)
    */
-  function obtenerImagenRuta(imagen) {
-    if (!imagen) return 'img/plantas/default.jpg';
-    const ruta = imagen.startsWith('img/') ? imagen : `img/plantas/${imagen}`;
-    // Creamos una imagen temporal para verificar si existe
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(ruta);
-      img.onerror = () => resolve('img/plantas/default.jpg');
-      img.src = ruta;
-    });
-  }
+  const filtros = {
+    ramos: 'todos',       // valores posibles: 'todos', 'si', 'no'
+    temporada: 'todas',   // valores posibles: 'todas', 'primavera', 'verano', 'otoño', 'invierno'
+    dificultad: 'todas'   // valores posibles: 'todas', 'facil', 'media', 'dificil'
+  };
+
+  // ===== INICIALIZACIÓN =====
+  // Cargar productos desde JSON y renderizar en catálogo
+  (async () => {
+    await cargarProductos();
+    renderizarProductos(todosLosProductos);
+    filtrarProductos();
+  })();
+
+  // ===== FUNCIONES PRINCIPALES (ORDEN DE EJECUCIÓN) =====
 
   /**
    * CARGAR PRODUCTOS DESDE JSON
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
    */
   async function cargarProductos() {
     try {
-      const response = await fetch('product_data.json');
+      const response = await fetch('../product_data.json');
       if (!response.ok) throw new Error('Error al cargar los productos');
       const data = await response.json();
       todosLosProductos = data.productos || [];
@@ -163,169 +164,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     // Reasignar event listeners a las nuevas tarjetas
     asignarEventosTarjetas();
-  }
-
-  /**
-   * UTILIDAD: Capitalizar texto
-   * Convierte el primer carácter a mayúscula y el resto a minúscula
-   * Ejemplo: 'VERANO' -> 'Verano', 'facil' -> 'Facil'
-   * 
-   * @param {string} texto Texto a capitalizar
-   * @returns {string} Texto capitalizado
-   */
-  function capitalizar(texto) {
-    if (!texto) return '';
-    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
-  }
-
-  /**
-   * Buscador de texto.  Si existe un input con id "search-input",
-   * escuchamos el evento `input` para filtrar por nombre.  El término
-   * introducido se tendrá en cuenta en filtrarProductos() junto con
-   * los demás filtros.  Este código no afectará a páginas que no
-   * tengan dicho elemento.
-   */
-  const searchInput = document.getElementById('search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      filtrarProductos();
-    });
-  }
-
-  /**
-   * OBJETO DE ESTADO DE FILTROS
-   * Almacena el estado actual de los filtros seleccionados
-   * 
-   * PROPIEDADES:
-   * - ramos: 'todos' (ambos) | 'si' (solo ramos) | 'no' (solo plantas)
-   * - temporada: 'todas' (sin filtro) | 'primavera', 'verano', 'otoño', 'invierno'
-   * - dificultad: 'todas' (sin filtro) | 'facil', 'media', 'dificil'
-   * 
-   * CAMBIOS:
-   * - Se actualiza cuando el usuario selecciona opciones en los filtros
-   * - Cada cambio dispara filtrarProductos() para mostrar/ocultar tarjetas
-   * 
-   * INICIAL: Todos los valores están en modo "sin filtro" (mostrar todo)
-   */
-  const filtros = {
-    ramos: 'todos',       // valores posibles: 'todos', 'si', 'no'
-    temporada: 'todas',   // valores posibles: 'todas', 'primavera', 'verano', 'otoño', 'invierno'
-    dificultad: 'todas'   // valores posibles: 'todas', 'facil', 'media', 'dificil'
-  };
-
-  /**
-   * Asignamos un manejador de eventos a cada botón de "filtro-toggle".
-   * Estos botones representan los títulos de los grupos de filtros
-   * (Ramos, Temporada y Dificultad). Al hacer click sobre ellos,
-   * alternamos la clase "visible" en el contenedor de opciones
-   * correspondiente para mostrar u ocultar dicho grupo de opciones.
-   */
-  document.querySelectorAll('.filtro-toggle').forEach(btn => {
-    btn.addEventListener('click', () => {
-      // El atributo data-target contiene el id del contenedor de opciones
-      const target = btn.dataset.target;
-      const opciones = document.getElementById(target);
-      if (opciones) {
-        // toggle(): si la clase existe la elimina, si no, la añade
-        opciones.classList.toggle('visible');
-      }
-    });
-  });
-
-  /**
-   * Asignamos un manejador a cada "filtro-opcion". Estas son las
-   * opciones individuales dentro de cada grupo de filtros. Al
-   * seleccionar una opción:
-   *   1. Recuperamos el grupo al que pertenece (ramos, temporada o dificultad)
-   *      y el valor que representa.
-   *   2. Actualizamos el objeto de filtros para ese grupo.
-   *   3. Marcamos visualmente la opción seleccionada y desmarcamos las demás.
-   *   4. Actualizamos los textos de encabezado para reflejar la selección.
-   *   5. Llamamos a filtrarProductos() para ocultar o mostrar las tarjetas
-   *      en función de los filtros activos.
-   */
-  document.querySelectorAll('.filtro-opcion').forEach(op => {
-    op.addEventListener('click', () => {
-      const grupo = op.dataset.grupo;   // e.g., "temporada"
-      const valor = op.dataset.valor;   // e.g., "verano"
-      // Actualizamos el valor del filtro correspondiente
-      filtros[grupo] = valor;
-      // Eliminar la clase 'selected' de todas las opciones del mismo grupo
-      document.querySelectorAll(`.filtro-opcion[data-grupo="${grupo}"]`).forEach(b => b.classList.remove('selected'));
-      // Añadir la clase 'selected' a la opción pulsada para resaltarla
-      op.classList.add('selected');
-      // Actualizar interfaz y filtrar
-      actualizarInterfaz(grupo, valor);
-      filtrarProductos();
-    });
-  });
-
-  /**
-   * Asignamos un manejador al botón de "Limpiar filtros". Al pulsarlo:
-   *   - Restablece todas las propiedades de filtros a su estado inicial.
-   *   - Elimina cualquier selección visual en las opciones.
-   *   - Restituye los textos del catálogo a su estado por defecto.
-   *   - Muestra todas las tarjetas de productos eliminando cualquier filtrado.
-   */
-  const limpiarBtn = document.getElementById('limpiarFiltros');
-  if (limpiarBtn) {
-    limpiarBtn.addEventListener('click', () => {
-      // Reiniciar filtros a valores por defecto
-      filtros.ramos = 'todos';
-      filtros.temporada = 'todas';
-      filtros.dificultad = 'todas';
-      // Quitar la clase 'selected' de todas las opciones
-      document.querySelectorAll('.filtro-opcion.selected').forEach(el => el.classList.remove('selected'));
-      // Restaurar encabezados a sus textos originales
-      document.getElementById('titulo-catalogo').textContent = 'Todas las Plantas';
-      document.getElementById('texto-filtro-actual').textContent = 'Mostrando: Todas las plantas';
-      // Forzar a que todas las tarjetas se muestren
-      filtrarProductos();
-    });
-  }
-
-  /**
-   * Actualiza el título y el texto que describe el filtro seleccionado.
-   * @param {string} grupo Grupo de filtro modificado (ramos, temporada, dificultad)
-   * @param {string} valor Valor seleccionado dentro del grupo
-   */
-  function actualizarInterfaz(grupo, valor) {
-    /**
-     * Diccionarios que mapean el valor seleccionado a un texto legible.
-     * Cada grupo tiene su propio conjunto de traducciones.
-     */
-    const textos = {
-      ramos: {
-        todos: 'Todas las plantas',
-        si: 'Solo ramos pre-hechos',
-        no: 'Solo plantas individuales'
-      },
-      temporada: {
-        todas: 'Todas las temporadas',
-        primavera: 'Primavera',
-        verano: 'Verano',
-        otoño: 'Otoño',
-        invierno: 'Invierno'
-      },
-      dificultad: {
-        todas: 'Todas las dificultades',
-        facil: 'Fácil',
-        media: 'Media',
-        dificil: 'Difícil'
-      }
-    };
-    // Elegimos el texto correspondiente según el grupo y el valor
-    const texto = textos[grupo] && textos[grupo][valor] ? textos[grupo][valor] : 'Filtro aplicado';
-    // Actualizamos el párrafo que indica qué se está mostrando
-    document.getElementById('texto-filtro-actual').textContent = 'Mostrando: ' + texto;
-    // Si el filtro modificado es el de ramos, también actualizamos el título principal
-    if (grupo === 'ramos') {
-      let titulo;
-      if (valor === 'si') titulo = 'Ramos Pre-hechos';
-      else if (valor === 'no') titulo = 'Plantas Individuales';
-      else titulo = 'Todas las Plantas';
-      document.getElementById('titulo-catalogo').textContent = titulo;
-    }
   }
 
   /**
@@ -461,17 +299,186 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
           // Codificamos el nombre para pasarlo como parámetro en la URL
           const param = encodeURIComponent(nombre);
-          window.location.href = `product.html?nombre=${param}`;
+          window.location.href = `productos/product.html?nombre=${param}`;
         }
       });
     });
   }
 
-  // ===== INICIALIZACIÓN =====
-  // Cargar productos desde JSON y renderizar en catálogo
-  (async () => {
-    await cargarProductos();
-    renderizarProductos(todosLosProductos);
-    filtrarProductos();
-  })();
+  // ===== EVENT LISTENERS (CONFIGURACIÓN DE INTERACCIONES) =====
+
+  /**
+   * Buscador de texto.  Si existe un input con id "search-input",
+   * escuchamos el evento `input` para filtrar por nombre.  El término
+   * introducido se tendrá en cuenta en filtrarProductos() junto con
+   * los demás filtros.  Este código no afectará a páginas que no
+   * tengan dicho elemento.
+   */
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      filtrarProductos();
+    });
+  }
+
+  /**
+   * Asignamos un manejador de eventos a cada botón de "filtro-toggle".
+   * Estos botones representan los títulos de los grupos de filtros
+   * (Ramos, Temporada y Dificultad). Al hacer click sobre ellos,
+   * alternamos la clase "visible" en el contenedor de opciones
+   * correspondiente para mostrar u ocultar dicho grupo de opciones.
+   */
+  document.querySelectorAll('.filtro-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // El atributo data-target contiene el id del contenedor de opciones
+      const target = btn.dataset.target;
+      const opciones = document.getElementById(target);
+      if (opciones) {
+        // toggle(): si la clase existe la elimina, si no, la añade
+        opciones.classList.toggle('visible');
+      }
+    });
+  });
+
+  /**
+   * Asignamos un manejador a cada "filtro-opcion". Estas son las
+   * opciones individuales dentro de cada grupo de filtros. Al
+   * seleccionar una opción:
+   *   1. Recuperamos el grupo al que pertenece (ramos, temporada o dificultad)
+   *      y el valor que representa.
+   *   2. Actualizamos el objeto de filtros para ese grupo.
+   *   3. Marcamos visualmente la opción seleccionada y desmarcamos las demás.
+   *   4. Actualizamos los textos de encabezado para reflejar la selección.
+   *   5. Llamamos a filtrarProductos() para ocultar o mostrar las tarjetas
+   *      en función de los filtros activos.
+   */
+  document.querySelectorAll('.filtro-opcion').forEach(op => {
+    op.addEventListener('click', () => {
+      const grupo = op.dataset.grupo;   // e.g., "temporada"
+      const valor = op.dataset.valor;   // e.g., "verano"
+      // Actualizamos el valor del filtro correspondiente
+      filtros[grupo] = valor;
+      // Eliminar la clase 'selected' de todas las opciones del mismo grupo
+      document.querySelectorAll(`.filtro-opcion[data-grupo="${grupo}"]`).forEach(b => b.classList.remove('selected'));
+      // Añadir la clase 'selected' a la opción pulsada para resaltarla
+      op.classList.add('selected');
+      // Actualizar interfaz y filtrar
+      actualizarInterfaz(grupo, valor);
+      filtrarProductos();
+    });
+  });
+
+  /**
+   * Asignamos un manejador al botón de "Limpiar filtros". Al pulsarlo:
+   *   - Restablece todas las propiedades de filtros a su estado inicial.
+   *   - Elimina cualquier selección visual en las opciones.
+   *   - Restituye los textos del catálogo a su estado por defecto.
+   *   - Muestra todas las tarjetas de productos eliminando cualquier filtrado.
+   */
+  const limpiarBtn = document.getElementById('limpiarFiltros');
+  if (limpiarBtn) {
+    limpiarBtn.addEventListener('click', () => {
+      // Reiniciar filtros a valores por defecto
+      filtros.ramos = 'todos';
+      filtros.temporada = 'todas';
+      filtros.dificultad = 'todas';
+      // Quitar la clase 'selected' de todas las opciones
+      document.querySelectorAll('.filtro-opcion.selected').forEach(el => el.classList.remove('selected'));
+      // Restaurar encabezados a sus textos originales
+      document.getElementById('titulo-catalogo').textContent = 'Todas las Plantas';
+      document.getElementById('texto-filtro-actual').textContent = 'Mostrando: Todas las plantas';
+      // Forzar a que todas las tarjetas se muestren
+      filtrarProductos();
+    });
+  }
+
+  // ===== FUNCIONES AUXILIARES Y DE UTILIDAD =====
+
+  /**
+   * Actualiza el título y el texto que describe el filtro seleccionado.
+   * @param {string} grupo Grupo de filtro modificado (ramos, temporada, dificultad)
+   * @param {string} valor Valor seleccionado dentro del grupo
+   */
+  function actualizarInterfaz(grupo, valor) {
+    /**
+     * Diccionarios que mapean el valor seleccionado a un texto legible.
+     * Cada grupo tiene su propio conjunto de traducciones.
+     */
+    const textos = {
+      ramos: {
+        todos: 'Todas las plantas',
+        si: 'Solo ramos pre-hechos',
+        no: 'Solo plantas individuales'
+      },
+      temporada: {
+        todas: 'Todas las temporadas',
+        primavera: 'Primavera',
+        verano: 'Verano',
+        otoño: 'Otoño',
+        invierno: 'Invierno'
+      },
+      dificultad: {
+        todas: 'Todas las dificultades',
+        facil: 'Fácil',
+        media: 'Media',
+        dificil: 'Difícil'
+      }
+    };
+    // Elegimos el texto correspondiente según el grupo y el valor
+    const texto = textos[grupo] && textos[grupo][valor] ? textos[grupo][valor] : 'Filtro aplicado';
+    // Actualizamos el párrafo que indica qué se está mostrando
+    document.getElementById('texto-filtro-actual').textContent = 'Mostrando: ' + texto;
+    // Si el filtro modificado es el de ramos, también actualizamos el título principal
+    if (grupo === 'ramos') {
+      let titulo;
+      if (valor === 'si') titulo = 'Ramos Pre-hechos';
+      else if (valor === 'no') titulo = 'Plantas Individuales';
+      else titulo = 'Todas las Plantas';
+      document.getElementById('titulo-catalogo').textContent = titulo;
+    }
+  }
+
+  /**
+   * OBTENER RUTA DE IMAGEN VERIFICADA
+   * Verifica si la imagen de un producto existe. Si no existe, retorna default.jpg
+   * 
+   * PROCESO:
+   * 1. Si imagen está vacía: retorna directamente 'img/plantas/default.jpg'
+   * 2. Si la imagen no comienza con 'img/': añade prefijo 'img/plantas/'
+   * 3. Crea una imagen temporal y verifica si carga (img.onload/img.onerror)
+   * 4. Retorna la ruta verificada o default.jpg si falla
+   * 
+   * IMPORTANCIA:
+   * - Previene errores de imágenes rotas en el catálogo
+   * - Asegura que todas las imágenes enviadas al carrito existan
+   * - Se usa en renderizarProductos() para mostrar las tarjetas
+   * - Se usa en asignarEventosTarjetas() al añadir al carrito
+   * 
+   * @param {string} imagen Nombre o ruta relativa de la imagen
+   * @returns {Promise<string>} Promesa que resuelve a la ruta verificada
+   */
+  function obtenerImagenRuta(imagen) {
+    if (!imagen) return '../img/plantas/default.jpg';
+    const ruta = imagen.startsWith('../img/') ? imagen : `../img/plantas/${imagen}`;
+    // Creamos una imagen temporal para verificar si existe
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(ruta);
+      img.onerror = () => resolve('../img/plantas/default.jpg');
+      img.src = ruta;
+    });
+  }
+
+  /**
+   * UTILIDAD: Capitalizar texto
+   * Convierte el primer carácter a mayúscula y el resto a minúscula
+   * Ejemplo: 'VERANO' -> 'Verano', 'facil' -> 'Facil'
+   * 
+   * @param {string} texto Texto a capitalizar
+   * @returns {string} Texto capitalizado
+   */
+  function capitalizar(texto) {
+    if (!texto) return '';
+    return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
+  }
 });
