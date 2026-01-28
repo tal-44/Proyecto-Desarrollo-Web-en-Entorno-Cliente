@@ -132,14 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     return null;
   }
-
-  /**
-   * Capitaliza la primera letra de una cadena
-   */
-  function capitalizar(texto) {
-    if (!texto) return '';
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-  }
+  // capitalizar() ahora está disponible globalmente desde utils.js
 
   /**
    * RENDERIZAR DETALLES DEL PRODUCTO

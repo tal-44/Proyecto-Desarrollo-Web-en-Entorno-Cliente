@@ -8,6 +8,8 @@
   
   <!-- FullCalendar CSS (integrado en el JS desde v6) -->
   
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Estilos dark mode para el historial -->
   <link rel="stylesheet" href="history-dark.css">
   
@@ -204,6 +206,85 @@
     .btn-back:hover {
       background-color: #d6eecf;
     }
+
+    /* Estilos para el gráfico de preferencias */
+    .preferences-section {
+      margin-top: 2rem;
+      background-color: #f9f9f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+
+    .preferences-section h3 {
+      margin-top: 0;
+      color: #2c662d;
+      border-bottom: 2px solid #2c662d;
+      padding-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .chart-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      max-width: 400px;
+      margin: 1rem auto;
+      padding: 1rem;
+    }
+
+    .chart-container canvas {
+      max-width: 100%;
+      max-height: 300px;
+    }
+
+    .no-preferences-message {
+      text-align: center;
+      color: #999;
+      padding: 2rem 1rem;
+    }
+
+    .no-preferences-message .icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .preferences-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 0.75rem 1.5rem;
+      background-color: #fff;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      min-width: 120px;
+    }
+
+    .stat-item .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #2c662d;
+    }
+
+    .stat-item .stat-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 0.25rem;
+    }
+
+    .stat-item.plantas {
+      border-left: 4px solid #2c662d;
+    }
+
+    .stat-item.ramos {
+      border-left: 4px solid #8bc34a;
+    }
   </style>
 </head>
 <body>
@@ -218,6 +299,7 @@
         <a href="../index.html" class="nav-link">Catálogo</a>
         <a href="../test/test.html" class="nav-link">Realiza un Test</a>
         <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="../index.html#nuestras-tiendas" class="nav-link">Tiendas</a>
       </nav>
       <div class="user-actions">
         <div id="user-info" class="user-info"></div>
@@ -243,14 +325,14 @@
 
       <button class="btn-back" onclick="window.history.back()">← Volver atrás</button>
 
-      <div id="auth-required" class="empty-state" style="display: none;">
+      <div id="auth-required" class="empty-state hidden">
         <div class="empty-state-icon">🔐</div>
         <h2>Acceso Restringido</h2>
         <p>Debes estar registrado y con sesión iniciada para ver tu historial de compras.</p>
-        <a href="../usuarios/login.html" style="color: #2c662d; text-decoration: underline; margin-top: 1rem; display: block;">Iniciar sesión</a>
+        <a href="../usuarios/login.html" class="login-link">Iniciar sesión</a>
       </div>
 
-      <div id="history-content" style="display: none;">
+      <div id="history-content" class="hidden">
         <div class="history-container">
           <!-- Calendario de FullCalendar -->
           <div class="calendar-section">
@@ -267,6 +349,22 @@
             </div>
           </div>
         </div>
+<!-- Sección del gráfico de preferencias de compra -->
+<div class="preferences-section">
+  <h3>🥧 Preferencias de Compra</h3>
+  <div id="preferences-chart-container">
+    <div class="chart-container">
+      <canvas id="preferencesChart"></canvas>
+    </div>
+    <div id="preferences-stats" class="preferences-stats"></div>
+  </div>
+  <div id="no-preferences" class="no-preferences-message hidden">
+    <div class="icon">📊</div>
+    <p>Aún no tienes compras registradas para mostrar tus preferencias.</p>
+    <p class="small-text">Realiza tu primer pedido y aquí verás si prefieres plantas o
+      ramos.</p>
+  </div>
+</div>
       </div>
     </section>
   </main>
@@ -280,6 +378,8 @@
   <!-- SweetAlert2 para notificaciones -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
+  <!-- Utilidades comunes -->
+  <script src="../lib/utils.js"></script>
   <!-- Scripts del proyecto -->
   <script src="../carrito/cart.js"></script>
   <script src="../usuarios/user.js"></script>

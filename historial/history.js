@@ -90,9 +90,11 @@ window.savePurchaseToHistory = function(cartItems, total) {
   // Guardar de nuevo
   localStorage.setItem('purchases', JSON.stringify(purchases));
 
-  console.log('Compra registrada para usuario:', currentUser.username);
-  console.log('Compra:', purchase);
-  console.log('Total de compras en sistema:', purchases.length);
+  // Disparar evento personalizado para actualizar el gráfico de preferencias
+  // Esto permite que la página de history.html actualice el gráfico automáticamente
+  window.dispatchEvent(new CustomEvent('purchaseCompleted', {
+    detail: { purchase: purchase }
+  }));
 };
 
 /**
@@ -133,22 +135,6 @@ window.getPurchaseHistory = function() {
   return [];
 };
 
-/**
- * OBTENER USUARIO ACTUAL
- * Función idéntica a la del script user.js, incluida aquí para asegurar
- * que este script pueda funcionar independientemente
- *
- * @returns {Object|null} Objeto usuario { username, password } o null
- */
-function getCurrentUser() {
-  const data = localStorage.getItem('currentUser');
-  try {
-    return data ? JSON.parse(data) : null;
-  } catch (e) {
-    return null;
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   // Verificar autenticación
   const currentUser = getCurrentUser();
@@ -157,14 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!currentUser || !currentUser.username) {
     // Usuario no autenticado
-    authRequiredDiv.style.display = 'block';
-    historyContentDiv.style.display = 'none';
+    authRequiredDiv.classList.remove('hidden');
+    historyContentDiv.classList.add('hidden');
     return;
   }
 
   // Usuario autenticado: mostrar contenido
-  authRequiredDiv.style.display = 'none';
-  historyContentDiv.style.display = 'block';
+  authRequiredDiv.classList.add('hidden');
+  historyContentDiv.classList.remove('hidden');
 
   // Variables globales
   let calendar;
@@ -351,6 +337,153 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryDiv.innerHTML = html;
   }
 
+  /**
+   * CLASIFICAR PRODUCTOS EN RAMOS O PLANTAS
+   * Determina si un producto es un ramo basándose en:
+   * 1. Si el nombre contiene "Ramo"
+   * 2. Si está asociado a ramos
+   *
+   * @param {string} productName
+   * @returns {string}
+   */
+  function classifyProduct(productName) {
+    const name = productName.toLowerCase();
+    if (name.includes('ramo')) {
+      return 'ramos';
+    }
+    return 'plantas';
+  }
+
+  /**
+   * CALCULAR PREFERENCIAS DE COMPRA
+   * Recorre todas las compras del usuario y clasifica los items
+   * en Ramos y Plantas, contando la cantidad total de cada tipo
+   *
+   * @returns {Object}
+   */
+  function calculatePurchasePreferences() {
+    let plantasCount = 0;
+    let ramosCount = 0;
+
+    purchases.forEach(purchase => {
+      if (purchase.items && Array.isArray(purchase.items)) {
+        purchase.items.forEach(item => {
+          const qty = item.qty || 1;
+          const category = classifyProduct(item.name);
+          if (category === 'ramos') {
+            ramosCount += qty;
+          } else {
+            plantasCount += qty;
+          }
+        });
+      }
+    });
+
+    return {
+      plantas: plantasCount,
+      ramos: ramosCount,
+      total: plantasCount + ramosCount
+    };
+  }
+
+  /**
+   * RENDERIZAR GRÁFICO DE PREFERENCIAS
+   * Crea el grafico de Chart.js
+   * mostrando la distribución entre Plantas y Ramos
+   */
+  let preferencesChart = null;
+
+  function renderPreferencesChart() {
+    const chartContainer = document.getElementById('preferences-chart-container');
+    const noPreferencesDiv = document.getElementById('no-preferences');
+    const statsDiv = document.getElementById('preferences-stats');
+    const canvas = document.getElementById('preferencesChart');
+
+    // Calcular preferencias
+    const preferences = calculatePurchasePreferences();
+
+    // Si no hay compras, mostrar mensaje y ocultar gráfico
+    if (preferences.total === 0) {
+      chartContainer.classList.add('hidden');
+      noPreferencesDiv.classList.remove('hidden');
+      return;
+    }
+
+    // Mostrar contenedor y ocultar mensaje
+    chartContainer.classList.remove('hidden');
+    noPreferencesDiv.classList.add('hidden');
+
+    // Calcular porcentajes
+    const plantasPct = ((preferences.plantas / preferences.total) * 100).toFixed(1);
+    const ramosPct = ((preferences.ramos / preferences.total) * 100).toFixed(1);
+
+    // Renderizar estadísticas
+    statsDiv.innerHTML = `
+      <div class="stat-item plantas">
+        <div class="stat-value">${preferences.plantas}</div>
+        <div class="stat-label">🌱 Plantas (${plantasPct}%)</div>
+      </div>
+      <div class="stat-item ramos">
+        <div class="stat-value">${preferences.ramos}</div>
+        <div class="stat-label">💐 Ramos (${ramosPct}%)</div>
+      </div>
+    `;
+
+    // Destruir gráfico anterior
+    if (preferencesChart) {
+      preferencesChart.destroy();
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    // Crear el gráfico
+    preferencesChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['🌱 Plantas', '💐 Ramos'],
+        datasets: [{
+          data: [preferences.plantas, preferences.ramos],
+          backgroundColor: [
+            '#2c662d',
+            '#8bc34a'
+          ],
+          borderColor: [
+            '#1f4820',
+            '#6b9b3a'
+          ],
+          borderWidth: 2,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              font: {
+                size: 14
+              },
+              usePointStyle: true
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = context.raw;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = ((value / total) * 100).toFixed(1);
+                return `${context.label}: ${value} unidades (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
   // Inicializar el calendario y historial
   if (purchases.length === 0) {
     // Si no hay compras, mostrar mensaje vacío
@@ -364,5 +497,27 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // Renderizar calendario
   renderCalendar();
+
+  // Renderizar gráfico de preferencias (no afecta a FullCalendar)
+  renderPreferencesChart();
+
+  // Escuchar evento de compra completada para actualizar automáticamente
+  // el calendario y el gráfico de preferencias sin recargar la página
+  window.addEventListener('purchaseCompleted', function(event) {
+    purchases = window.getPurchaseHistory();
+    renderCalendar();
+    renderPreferencesChart();
+    if (purchases.length > 0) {
+      const summaryDiv = document.getElementById('order-summary');
+      if (summaryDiv && summaryDiv.querySelector('.no-order-selected')) {
+        summaryDiv.innerHTML = `
+          <div class="no-order-selected">
+            <p>Selecciona una fecha con compra para ver los detalles.</p>
+          </div>
+        `;
+      }
+    }
+  });
 });

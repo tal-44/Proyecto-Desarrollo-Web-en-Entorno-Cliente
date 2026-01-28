@@ -185,17 +185,17 @@
 
   <main>
     <!-- Mensaje si no está autenticado -->
-    <div id="auth-required" class="auth-required" style="display: none;">
+    <div id="auth-required" class="auth-required hidden">
       <h2>🔒 Autenticación Requerida</h2>
       <p>Debes iniciar sesión para ver tu historial de compras.</p>
-      <p style="margin-top: 1rem;">
+      <p class="margin-top-1">
         <a href="login.html">Iniciar Sesión</a> | 
         <a href="register.html">Registrarse</a>
       </p>
     </div>
 
     <!-- Contenido del historial -->
-    <div id="history-content" style="display: none;">
+    <div id="history-content" class="hidden">
       <div class="history-container">
         <div class="history-header">
           <h1>📅 Historial de Compras</h1>
@@ -216,6 +216,7 @@
   </footer>
 
   <!-- Scripts del proyecto -->
+  <script src="utils.js"></script>
   <script src="cart.js"></script>
   <script src="user.js"></script>
   <script src="history.js"></script>
@@ -228,27 +229,19 @@
       const historyContentDiv = document.getElementById('history-content');
 
       if (!currentUser || !currentUser.username) {
-        authRequiredDiv.style.display = 'block';
-        historyContentDiv.style.display = 'none';
+        authRequiredDiv.classList.remove('hidden');
+        historyContentDiv.classList.add('hidden');
         return;
       }
 
       // Usuario autenticado: mostrar contenido
-      authRequiredDiv.style.display = 'none';
-      historyContentDiv.style.display = 'block';
+      authRequiredDiv.classList.add('hidden');
+      historyContentDiv.classList.remove('hidden');
 
       // Cargar y mostrar historial
       displaySimpleHistory();
     });
 
-    function getCurrentUser() {
-      const data = localStorage.getItem('currentUser');
-      try {
-        return data ? JSON.parse(data) : null;
-      } catch (e) {
-        return null;
-      }
-    }
 
     function displaySimpleHistory() {
       const purchases = window.getPurchaseHistory ? window.getPurchaseHistory() : [];

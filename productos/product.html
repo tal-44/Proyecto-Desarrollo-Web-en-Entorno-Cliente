@@ -19,6 +19,7 @@
         <a href="../index.html" class="nav-link">Catálogo</a>
         <a href="../test/test.html" class="nav-link">Realiza un Test</a>
         <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="../index.html#nuestras-tiendas" class="nav-link">Tiendas</a>
       </nav>
       <div class="user-actions">
         <div id="user-info" class="user-info"></div>
@@ -80,8 +81,8 @@
       <h2>Comentarios</h2>
       <div id="comments-list" class="comments-list"></div>
       <div id="comment-form-container" class="comment-form-container">
-        <p id="comment-login-msg" class="comment-login-msg" style="display:none;">Debes iniciar sesión para comentar.</p>
-        <form id="comment-form" class="comment-form" style="display:none;">
+        <p id="comment-login-msg" class="comment-login-msg hidden">Debes iniciar sesión para comentar.</p>
+        <form id="comment-form" class="comment-form hidden">
           <label for="comment-rating">Valoración:</label>
           <select id="comment-rating">
             <option value="5">5</option>
@@ -104,6 +105,7 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../lib/utils.js"></script>
   <script src="../historial/history.js"></script>
   <script src="../carrito/cart.js"></script>
   <script src="../usuarios/user.js"></script>

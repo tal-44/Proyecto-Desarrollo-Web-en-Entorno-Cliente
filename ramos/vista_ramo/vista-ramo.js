@@ -221,13 +221,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       e.preventDefault();
       e.stopImmediatePropagation(); // También detener otros listeners en el mismo elemento
 
-      console.log('=== CLICK BOTÓN RELACIONADO ===');
-      console.log('Producto:', ramo.nombre);
-
       // Usar la función de cart.js directamente
       if (typeof window.addItemToCart === 'function') {
         window.addItemToCart(ramo.nombre, ramo.precio, ramo.imagen);
-        console.log('Producto añadido al carrito');
 
         // Mostrar confirmación con SweetAlert2
         const isDarkMode = document.body.classList.contains('dark-mode');
@@ -260,24 +256,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Event listener para hacer click en la tarjeta (navegación)
     article.addEventListener('click', function (e) {
-      console.log('=== CLICK EN TARJETA ===');
-      console.log('e.target:', e.target.tagName, e.target.className);
-
       // Varias verificacones pues hasy que asegurarse de que se este clickando el boton
       const esBoton = e.target.classList.contains('add-to-cart');
       const esDentroBoton = e.target.closest('.add-to-cart') !== null;
       const esElementoButton = e.target.tagName === 'BUTTON';
 
-      console.log('esBoton:', esBoton, 'esDentroBoton:', esDentroBoton, 'esElementoButton:', esElementoButton);
-
       if (esBoton || esDentroBoton || esElementoButton) {
-        console.log('Click en botón detectado - NO navegar');
         e.preventDefault();
         e.stopPropagation();
         return false;
       }
 
-      console.log('Click en tarjeta - navegando a:', ramo.nombre);
 
       // Preparar datos del ramo para recargar la vista
       const ramoData = {

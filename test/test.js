@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await response.json();
             // Filtrar solo plantas (no ramos)
             productos = (data.productos || []).filter(p => !p.es_ramo);
-            console.log('Productos cargados:', productos.length);
         } catch (error) {
             console.error('Error cargando productos:', error);
             productos = [];
@@ -335,5 +334,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ============================================================= 
     await cargarProductos();
     mostrarPregunta(1);
-    console.log('Test inicializado correctamente');
 });

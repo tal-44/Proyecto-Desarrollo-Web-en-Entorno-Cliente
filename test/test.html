@@ -22,6 +22,7 @@
         <a href="../index.html" class="nav-link">Catálogo</a>
         <a href="test.html" class="nav-link active">Realiza un Test</a>
         <a href="../ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="../index.html#nuestras-tiendas" class="nav-link">Tiendas</a>
       </nav>
       <div class="user-actions">
         <div id="user-info" class="user-info"></div>
@@ -186,14 +187,14 @@
   <button type="button" id="btn-siguiente" class="nav-btn btn-siguiente">
     Siguiente →
   </button>
-  <button type="submit" id="btn-resultado" class="nav-btn btn-resultado" style="display: none;">
+  <button type="submit" id="btn-resultado" class="nav-btn btn-resultado hidden">
     Ver mi recomendación 🎯
   </button>
 </div>
         </form>
 
         <!-- Resultado del test (Se añade con JS) -->
-        <div id="resultado-test" class="resultado-container" style="display: none;">
+        <div id="resultado-test" class="resultado-container hidden">
           <div class="resultado-header">
             <h2>🎉 Tu planta ideal es...</h2>
           </div>
@@ -233,6 +234,8 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="../lib/utils.js"></script>
+  <script src="../historial/history.js"></script>
   <script src="../carrito/cart.js"></script>
   <script src="../usuarios/user.js"></script>
   <script src="../css/dark-mode.js"></script>

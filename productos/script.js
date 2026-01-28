@@ -167,6 +167,135 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   /**
+   * Buscador de texto.  Si existe un input con id "search-input",
+   * escuchamos el evento `input` para filtrar por nombre.  El término
+   * introducido se tendrá en cuenta en filtrarProductos() junto con
+   * los demás filtros.  Este código no afectará a páginas que no
+   * tengan dicho elemento.
+   */
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      filtrarProductos();
+    });
+  }
+
+  /**
+   * Asignamos un manejador de eventos a cada botón de "filtro-toggle".
+   * Estos botones representan los títulos de los grupos de filtros
+   * (Ramos, Temporada y Dificultad). Al hacer click sobre ellos,
+   * alternamos la clase "visible" en el contenedor de opciones
+   * correspondiente para mostrar u ocultar dicho grupo de opciones.
+   */
+  document.querySelectorAll('.filtro-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // El atributo data-target contiene el id del contenedor de opciones
+      const target = btn.dataset.target;
+      const opciones = document.getElementById(target);
+      if (opciones) {
+        // toggle(): si la clase existe la elimina, si no, la añade
+        opciones.classList.toggle('visible');
+      }
+    });
+  });
+
+  /**
+   * Asignamos un manejador a cada "filtro-opcion". Estas son las
+   * opciones individuales dentro de cada grupo de filtros. Al
+   * seleccionar una opción:
+   *   1. Recuperamos el grupo al que pertenece (ramos, temporada o dificultad)
+   *      y el valor que representa.
+   *   2. Actualizamos el objeto de filtros para ese grupo.
+   *   3. Marcamos visualmente la opción seleccionada y desmarcamos las demás.
+   *   4. Actualizamos los textos de encabezado para reflejar la selección.
+   *   5. Llamamos a filtrarProductos() para ocultar o mostrar las tarjetas
+   *      en función de los filtros activos.
+   */
+  document.querySelectorAll('.filtro-opcion').forEach(op => {
+    op.addEventListener('click', () => {
+      const grupo = op.dataset.grupo;   // e.g., "temporada"
+      const valor = op.dataset.valor;   // e.g., "verano"
+      // Actualizamos el valor del filtro correspondiente
+      filtros[grupo] = valor;
+      // Eliminar la clase 'selected' de todas las opciones del mismo grupo
+      document.querySelectorAll(`.filtro-opcion[data-grupo="${grupo}"]`).forEach(b => b.classList.remove('selected'));
+      // Añadir la clase 'selected' a la opción pulsada para resaltarla
+      op.classList.add('selected');
+      // Actualizar interfaz y filtrar
+      actualizarInterfaz(grupo, valor);
+      filtrarProductos();
+    });
+  });
+
+  /**
+   * Asignamos un manejador al botón de "Limpiar filtros". Al pulsarlo:
+   *   - Restablece todas las propiedades de filtros a su estado inicial.
+   *   - Elimina cualquier selección visual en las opciones.
+   *   - Restituye los textos del catálogo a su estado por defecto.
+   *   - Muestra todas las tarjetas de productos eliminando cualquier filtrado.
+   */
+  const limpiarBtn = document.getElementById('limpiarFiltros');
+  if (limpiarBtn) {
+    limpiarBtn.addEventListener('click', () => {
+      // Reiniciar filtros a valores por defecto
+      filtros.ramos = 'todos';
+      filtros.temporada = 'todas';
+      filtros.dificultad = 'todas';
+      // Quitar la clase 'selected' de todas las opciones
+      document.querySelectorAll('.filtro-opcion.selected').forEach(el => el.classList.remove('selected'));
+      // Restaurar encabezados a sus textos originales
+      document.getElementById('titulo-catalogo').textContent = 'Todas las Plantas';
+      document.getElementById('texto-filtro-actual').textContent = 'Mostrando: Todas las plantas';
+      // Forzar a que todas las tarjetas se muestren
+      filtrarProductos();
+    });
+  }
+
+  /**
+   * Actualiza el título y el texto que describe el filtro seleccionado.
+   * @param {string} grupo Grupo de filtro modificado (ramos, temporada, dificultad)
+   * @param {string} valor Valor seleccionado dentro del grupo
+   */
+  function actualizarInterfaz(grupo, valor) {
+    /**
+     * Diccionarios que mapean el valor seleccionado a un texto legible.
+     * Cada grupo tiene su propio conjunto de traducciones.
+     */
+    const textos = {
+      ramos: {
+        todos: 'Todas las plantas',
+        si: 'Solo ramos pre-hechos',
+        no: 'Solo plantas individuales'
+      },
+      temporada: {
+        todas: 'Todas las temporadas',
+        primavera: 'Primavera',
+        verano: 'Verano',
+        otoño: 'Otoño',
+        invierno: 'Invierno'
+      },
+      dificultad: {
+        todas: 'Todas las dificultades',
+        facil: 'Fácil',
+        media: 'Media',
+        dificil: 'Difícil'
+      }
+    };
+    // Elegimos el texto correspondiente según el grupo y el valor
+    const texto = textos[grupo] && textos[grupo][valor] ? textos[grupo][valor] : 'Filtro aplicado';
+    // Actualizamos el párrafo que indica qué se está mostrando
+    document.getElementById('texto-filtro-actual').textContent = 'Mostrando: ' + texto;
+    // Si el filtro modificado es el de ramos, también actualizamos el título principal
+    if (grupo === 'ramos') {
+      let titulo;
+      if (valor === 'si') titulo = 'Ramos Pre-hechos';
+      else if (valor === 'no') titulo = 'Plantas Individuales';
+      else titulo = 'Todas las Plantas';
+      document.getElementById('titulo-catalogo').textContent = titulo;
+    }
+  }
+
+  /**
    * APLICAR FILTROS Y MOSTRAR/OCULTAR TARJETAS
    * Itera todas las tarjetas y las muestra/oculta según los filtros activos
    * 

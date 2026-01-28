@@ -219,20 +219,3 @@ function handleLogin(e) {
   // Redirigimos al catálogo
   window.location.href = '../index.html';
 }
-
-/**
- * MOSTRAR MENSAJE DE ERROR
- * Utilidad para mostrar mensajes de error en los formularios de autenticación
- * 
- * @param {HTMLElement} element Elemento DOM donde mostrar el mensaje (ej: <p id="login-error">)
- * @param {string} message Texto del mensaje de error a mostrar
- */
-function showError(element, message) {
-  if (!element) {
-    console.warn('Elemento de error no encontrado');
-    return;
-  }
-  element.textContent = message;
-  element.style.display = 'block';
-  console.log('Error mostrado:', message);
-}

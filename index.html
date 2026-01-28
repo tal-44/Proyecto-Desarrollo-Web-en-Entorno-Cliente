@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hito 1 - Catálogo de Plantas</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Leaflet CSS para el mapa de tiendas -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 </head>
 <body>
   <header class="site-header">
@@ -20,6 +22,7 @@
         <a href="index.html" class="nav-link">Catálogo</a>
         <a href="test/test.html" class="nav-link">Realiza un Test</a>
         <a href="ramos/ramos.html" class="nav-link">Ramos Pre-hechos</a>
+        <a href="#nuestras-tiendas" class="nav-link">Tiendas</a>
       </nav>
       <!-- Botón del carrito: muestra un icono y un contador de artículos -->
       <div class="user-actions">
@@ -86,11 +89,38 @@
       <div class="productos-grid" id="productos-grid">
         <!-- Los productos se cargan dinámicamente desde product_data.json -->
       </div>
-      <div id="sin-resultados" class="sin-resultados" style="display:none;">
+      <div id="sin-resultados" class="sin-resultados hidden">
         <p>No se encontraron plantas con los filtros seleccionados.</p>
       </div>
     </section>
   </main>
+
+  <!-- Sección Nuestras Tiendas con mapa Leaflet -->
+  <section class="tiendas-section" id="nuestras-tiendas">
+    <div class="tiendas-container">
+      <header class="tiendas-header">
+        <h2>Nuestras Tiendas</h2>
+        <p>Visítanos en nuestras tiendas físicas y descubre nuestra selección de plantas y ramos.</p>
+      </header>
+      <div class="tiendas-content">
+        <div id="map" class="mapa-tiendas"></div>
+        <div class="tiendas-info">
+          <div class="tienda-card">
+            <h3>Rincón Verde Centro</h3>
+            <p><strong>Dirección:</strong> Avenida de los Encuartes 21, Tres Cantos</p>
+            <p><strong>Horario:</strong> Lun-Sáb: 10:00 - 20:00</p>
+            <p><strong>Teléfono:</strong> +34 912 345 678</p>
+          </div>
+          <div class="tienda-card">
+            <h3>Rincón Verde Nuevo Tres Cantos</h3>
+            <p><strong>Dirección:</strong> Calle Sector Oficios 14, Tres Cantos</p>
+            <p><strong>Horario:</strong> Lun-Sáb: 09:30 - 21:00</p>
+            <p><strong>Teléfono:</strong> +34 915 678 901</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <footer class="site-footer">
     <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
@@ -98,11 +128,17 @@
 
   <!-- Librería SweetAlert2 para notificaciones -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Leaflet JS para el mapa de tiendas -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Utilidades comunes -->
+  <script src="lib/utils.js"></script>
   <!-- Scripts propios -->
   <script src="historial/history.js"></script>
   <script src="carrito/cart.js"></script>
   <script src="css/dark-mode.js"></script>
   <script src="productos/script.js"></script>
   <script src="usuarios/user.js"></script>
+  <!-- Script del mapa de tiendas -->
+  <script src="lib/stores-map.js"></script>
 </body>
 </html>

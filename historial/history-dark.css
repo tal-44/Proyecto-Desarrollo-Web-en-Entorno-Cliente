@@ -134,3 +134,49 @@ body.dark-mode .order-details[style*="background-color: #e5f5e0"] {
   background-color: rgba(168, 213, 168, 0.15) !important;
   border-color: rgba(168, 213, 168, 0.3) !important;
 }
+
+/* ===== ESTILOS DARK MODE PARA EL GRÁFICO DE PREFERENCIAS ===== */
+
+body.dark-mode .preferences-section {
+  background-color: #2d2d2d;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
+}
+
+body.dark-mode .preferences-section h3 {
+  color: #a8d5a8;
+  border-bottom-color: #a8d5a8;
+}
+
+body.dark-mode .chart-container {
+  background-color: transparent;
+}
+
+body.dark-mode .stat-item {
+  background-color: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .stat-item .stat-value {
+  color: #a8d5a8;
+}
+
+body.dark-mode .stat-item .stat-label {
+  color: #b0b0b0;
+}
+
+body.dark-mode .stat-item.plantas {
+  border-left-color: #a8d5a8;
+}
+
+body.dark-mode .stat-item.ramos {
+  border-left-color: #c5e1a5;
+}
+
+body.dark-mode .no-preferences-message {
+  color: #666666;
+}
+
+body.dark-mode .no-preferences-message .icon {
+  color: #a8d5a8;
+}
