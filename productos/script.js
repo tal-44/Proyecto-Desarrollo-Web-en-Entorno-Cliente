@@ -434,52 +434,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ===== FUNCIONES AUXILIARES Y DE UTILIDAD =====
-
-  /**
-   * Actualiza el título y el texto que describe el filtro seleccionado.
-   * @param {string} grupo Grupo de filtro modificado (ramos, temporada, dificultad)
-   * @param {string} valor Valor seleccionado dentro del grupo
-   */
-  function actualizarInterfaz(grupo, valor) {
-    /**
-     * Diccionarios que mapean el valor seleccionado a un texto legible.
-     * Cada grupo tiene su propio conjunto de traducciones.
-     */
-    const textos = {
-      ramos: {
-        todos: 'Todas las plantas',
-        si: 'Solo ramos pre-hechos',
-        no: 'Solo plantas individuales'
-      },
-      temporada: {
-        todas: 'Todas las temporadas',
-        primavera: 'Primavera',
-        verano: 'Verano',
-        otoño: 'Otoño',
-        invierno: 'Invierno'
-      },
-      dificultad: {
-        todas: 'Todas las dificultades',
-        facil: 'Fácil',
-        media: 'Media',
-        dificil: 'Difícil'
-      }
-    };
-    // Elegimos el texto correspondiente según el grupo y el valor
-    const texto = textos[grupo] && textos[grupo][valor] ? textos[grupo][valor] : 'Filtro aplicado';
-    // Actualizamos el párrafo que indica qué se está mostrando
-    document.getElementById('texto-filtro-actual').textContent = 'Mostrando: ' + texto;
-    // Si el filtro modificado es el de ramos, también actualizamos el título principal
-    if (grupo === 'ramos') {
-      let titulo;
-      if (valor === 'si') titulo = 'Ramos Pre-hechos';
-      else if (valor === 'no') titulo = 'Plantas Individuales';
-      else titulo = 'Todas las Plantas';
-      document.getElementById('titulo-catalogo').textContent = titulo;
-    }
-  }
-
   /**
    * OBTENER RUTA DE IMAGEN VERIFICADA
    * Verifica si la imagen de un producto existe. Si no existe, retorna default.jpg
