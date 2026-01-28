@@ -158,11 +158,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutBtn = document.createElement('button');
     checkoutBtn.textContent = 'Comprar';
     checkoutBtn.addEventListener('click', () => {
-      // For this demo we simply clear the cart and show a thank you alert
+      // Verificar si el usuario está autenticado antes de guardar compra
+      const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+      
+      if (currentUser && currentUser.username) {
+        // Si hay usuario autenticado, guardar compra en historial
+        if (window.savePurchaseToHistory) {
+          const cartCopy = JSON.parse(JSON.stringify(cart)); // Deep copy
+          const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+          window.savePurchaseToHistory(cartCopy, total);
+        }
+      }
+      
+      // Vaciar carrito
       cart = [];
       saveCart();
       renderCart();
       updateCartCount();
+      
       Swal.fire({
         icon: 'success',
         title: '¡Gracias por tu compra!',
@@ -206,20 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
    * 
    * Se llama automáticamente tras cualquier cambio en el carrito
    */
-  function renderCart() {
-    const overlayEl = document.querySelector('.cart-overlay');
-    if (!overlayEl) return;
-    const itemsContainer = overlayEl.querySelector('.cart-items');
-    const totalEl = overlayEl.querySelector('#cart-total');
-    // Clear previous content
-    itemsContainer.innerHTML = '';
-    let total = 0;
-    if (cart.length === 0) {
-      const emptyMsg = document.createElement('p');
-      emptyMsg.className = 'text-center';
-      emptyMsg.textContent = 'Tu cesta está vacía.';
-      itemsContainer.appendChild(emptyMsg);
-    } else {
+    function renderCart() {
+      const overlayEl = document.querySelector('.cart-overlay');
+      if (!overlayEl) return;
+      const itemsContainer = overlayEl.querySelector('.cart-items');
+      const totalEl = overlayEl.querySelector('#cart-total');
+      // Clear previous content
+      itemsContainer.innerHTML = '';
+      let total = 0;
+      if (cart.length === 0) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.className = 'text-center';
+        emptyMsg.textContent = 'Tu cesta está vacía.';
+        itemsContainer.appendChild(emptyMsg);
+      } else {
       cart.forEach((item, index) => {
         total += item.price * item.qty;
         const row = document.createElement('div');
@@ -349,4 +362,145 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addItemToCart = addItemToCart;
   window.openCart = openCart;
   window.closeCart = closeCart;
+
+  /**
+   * RENDERIZAR PÁGINA DE CARRITO
+   * Esta función se llama desde carrito.html para mostrar un resumen completo
+   * del carrito en una página dedicada (no en el modal flotante)
+   * 
+   * Crea una tabla con todos los items del carrito y permite su gestión
+   * Se invoca con: renderCartPage()
+   */
+  window.renderCartPage = function() {
+    const container = document.getElementById('cart-container');
+    if (!container) return;
+
+    if (cart.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 3rem 1rem; color: #999;">
+          <p style="font-size: 3rem; margin-bottom: 1rem;">🛒</p>
+          <h2>Tu carrito está vacío</h2>
+          <p>Añade productos para empezar tu compra.</p>
+          <a href="../index.html" style="color: #2c662d; text-decoration: none; padding: 0.5rem 1rem; background-color: #e5f5e0; border-radius: 4px; display: inline-block; margin-top: 1rem;">Ir al catálogo</a>
+        </div>
+      `;
+      return;
+    }
+
+    let html = `
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    let grandTotal = 0;
+
+    cart.forEach((item, index) => {
+      const itemTotal = item.price * item.qty;
+      grandTotal += itemTotal;
+      html += `
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+              <span>${item.name}</span>
+            </div>
+          </td>
+          <td>€${parseFloat(item.price).toFixed(2)}</td>
+          <td style="text-align: center;">
+            <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: center;">
+              <button onclick="decrementQty(${index})" style="width: 30px; height: 30px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: #fff;">−</button>
+              <span style="width: 30px; text-align: center;">${item.qty}</span>
+              <button onclick="incrementQty(${index})" style="width: 30px; height: 30px; cursor: pointer; border: 1px solid #ddd; border-radius: 4px; background: #fff;">+</button>
+            </div>
+          </td>
+          <td>€${itemTotal.toFixed(2)}</td>
+          <td>
+            <button onclick="removeFromCartPage(${index})" style="color: #c0392b; background: #ffe6e6; border: 1px solid #c0392b; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;">Eliminar</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+      <div style="text-align: right; margin-top: 1rem; padding: 1rem; background-color: #f5f5f5; border-radius: 4px;">
+        <h3 style="color: #2c662d; margin: 0 0 0.5rem 0;">Total: €${grandTotal.toFixed(2)}</h3>
+        <button id="checkout-page-btn" style="background-color: #2c662d; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; font-weight: 600;">Proceder a Compra</button>
+      </div>
+    `;
+
+    container.innerHTML = html;
+
+    // Añadir evento al botón de compra
+    const checkoutBtn = document.getElementById('checkout-page-btn');
+    if (checkoutBtn) {
+      checkoutBtn.addEventListener('click', () => {
+        const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+        
+        if (currentUser && currentUser.username) {
+          if (window.savePurchaseToHistory) {
+            const cartCopy = JSON.parse(JSON.stringify(cart));
+            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            window.savePurchaseToHistory(cartCopy, total);
+          }
+        }
+        
+        cart = [];
+        saveCart();
+        window.renderCartPage();
+        updateCartCount();
+        
+        Swal.fire({
+          icon: 'success',
+          title: '¡Gracias por tu compra!',
+          text: 'Tu pedido se ha procesado correctamente.',
+          confirmButtonText: 'Continuar comprando',
+          background: document.body.classList.contains('dark-mode') ? '#2d2d2d' : '#ffffff',
+          color: document.body.classList.contains('dark-mode') ? '#e8e8e8' : '#333333'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '../index.html';
+          }
+        });
+      });
+    }
+  };
+
+  /**
+   * FUNCIONES DE GESTIÓN PARA LA PÁGINA DEL CARRITO
+   */
+  window.decrementQty = function(index) {
+    if (cart[index].qty > 1) {
+      cart[index].qty -= 1;
+    } else {
+      cart.splice(index, 1);
+    }
+    saveCart();
+    window.renderCartPage();
+    updateCartCount();
+  };
+
+  window.incrementQty = function(index) {
+    cart[index].qty += 1;
+    saveCart();
+    window.renderCartPage();
+    updateCartCount();
+  };
+
+  window.removeFromCartPage = function(index) {
+    cart.splice(index, 1);
+    saveCart();
+    window.renderCartPage();
+    updateCartCount();
+  };
 });

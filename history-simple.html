@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Compras - Rincón Verde (Vista Simple)</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <style>
+    /* Estilos para la vista simple sin FullCalendar */
+    .history-container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .history-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .history-header h1 {
+      color: #2c662d;
+      margin-bottom: 0.5rem;
+    }
+
+    .purchase-list {
+      display: grid;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .purchase-card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .purchase-card:hover {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .purchase-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #2c662d;
+    }
+
+    .purchase-date {
+      font-size: 1.1rem;
+      color: #2c662d;
+      font-weight: bold;
+    }
+
+    .purchase-time {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .purchase-total {
+      font-size: 1.5rem;
+      color: #2c662d;
+      font-weight: bold;
+    }
+
+    .purchase-items {
+      margin-top: 1rem;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-name {
+      flex: 2;
+      font-weight: 500;
+    }
+
+    .item-qty {
+      flex: 1;
+      text-align: center;
+      color: #666;
+    }
+
+    .item-price {
+      flex: 1;
+      text-align: right;
+      color: #2c662d;
+    }
+
+    .no-purchases {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .no-purchases h2 {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .no-purchases p {
+      color: #999;
+    }
+
+    .auth-required {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin: 2rem auto;
+      max-width: 600px;
+    }
+
+    .auth-required h2 {
+      color: #dc3545;
+      margin-bottom: 1rem;
+    }
+
+    .auth-required a {
+      color: #2c662d;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .auth-required a:hover {
+      text-decoration: underline;
+    }
+
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #2c662d 0%, #3d8b40 100%);
+      color: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-content">
+      <h1 class="site-title">🌿 Rincón Verde</h1>
+      <nav class="site-nav">
+        <a href="index.html">Inicio</a>
+        <a href="carrito/carrito.html">Carrito (<span id="cart-count">0</span>)</a>
+        <div id="user-section"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Mensaje si no está autenticado -->
+    <div id="auth-required" class="auth-required" style="display: none;">
+      <h2>🔒 Autenticación Requerida</h2>
+      <p>Debes iniciar sesión para ver tu historial de compras.</p>
+      <p style="margin-top: 1rem;">
+        <a href="login.html">Iniciar Sesión</a> | 
+        <a href="register.html">Registrarse</a>
+      </p>
+    </div>
+
+    <!-- Contenido del historial -->
+    <div id="history-content" style="display: none;">
+      <div class="history-container">
+        <div class="history-header">
+          <h1>📅 Historial de Compras</h1>
+          <p>Vista simple de todas tus compras</p>
+        </div>
+
+        <!-- Estadísticas -->
+        <div id="stats" class="summary-stats"></div>
+
+        <!-- Lista de compras -->
+        <div id="purchase-list" class="purchase-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 Rincón Verde. Proyecto de JavaScript básico.</p>
+  </footer>
+
+  <!-- Scripts del proyecto -->
+  <script src="cart.js"></script>
+  <script src="user.js"></script>
+  <script src="history.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Verificar autenticación
+      const currentUser = getCurrentUser();
+      const authRequiredDiv = document.getElementById('auth-required');
+      const historyContentDiv = document.getElementById('history-content');
+
+      if (!currentUser || !currentUser.username) {
+        authRequiredDiv.style.display = 'block';
+        historyContentDiv.style.display = 'none';
+        return;
+      }
+
+      // Usuario autenticado: mostrar contenido
+      authRequiredDiv.style.display = 'none';
+      historyContentDiv.style.display = 'block';
+
+      // Cargar y mostrar historial
+      displaySimpleHistory();
+    });
+
+    function getCurrentUser() {
+      const data = localStorage.getItem('currentUser');
+      try {
+        return data ? JSON.parse(data) : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function displaySimpleHistory() {
+      const purchases = window.getPurchaseHistory ? window.getPurchaseHistory() : [];
+      const listDiv = document.getElementById('purchase-list');
+      const statsDiv = document.getElementById('stats');
+
+      if (purchases.length === 0) {
+        listDiv.innerHTML = `
+          <div class="no-purchases">
+            <h2>📝 No hay compras registradas</h2>
+            <p>Realiza tu primera compra para ver el historial aquí.</p>
+            <p style="margin-top: 1rem;">
+              <a href="index.html" style="color: #2c662d; font-weight: bold;">Ver Catálogo</a>
+            </p>
+          </div>
+        `;
+        statsDiv.innerHTML = '';
+        return;
+      }
+
+      // Calcular estadísticas
+      const totalCompras = purchases.length;
+      const totalGastado = purchases.reduce((sum, p) => sum + p.total, 0);
+      const totalProductos = purchases.reduce((sum, p) => 
+        sum + p.items.reduce((itemSum, item) => itemSum + item.qty, 0), 0
+      );
+
+      // Mostrar estadísticas
+      statsDiv.innerHTML = `
+        <div class="stat-card">
+          <div class="stat-value">${totalCompras}</div>
+          <div class="stat-label">Compras Realizadas</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">€${totalGastado.toFixed(2)}</div>
+          <div class="stat-label">Total Gastado</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">${totalProductos}</div>
+          <div class="stat-label">Productos Comprados</div>
+        </div>
+      `;
+
+      // Ordenar por fecha/hora más reciente primero
+      const sortedPurchases = purchases.sort((a, b) => {
+        const dateA = new Date(a.date + ' ' + a.time);
+        const dateB = new Date(b.date + ' ' + b.time);
+        return dateB - dateA;
+      });
+
+      // Mostrar cada compra
+      let html = '';
+      sortedPurchases.forEach((purchase, index) => {
+        const date = new Date(purchase.date);
+        const formattedDate = date.toLocaleDateString('es-ES', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+
+        html += `
+          <div class="purchase-card">
+            <div class="purchase-header">
+              <div>
+                <div class="purchase-date">📅 ${formattedDate}</div>
+                <div class="purchase-time">🕐 ${purchase.time}</div>
+              </div>
+              <div class="purchase-total">€${purchase.total.toFixed(2)}</div>
+            </div>
+            <div class="purchase-items">
+              <h3 style="margin-bottom: 0.5rem; color: #666;">Productos:</h3>
+        `;
+
+        purchase.items.forEach(item => {
+          const itemTotal = item.price * item.qty;
+          html += `
+            <div class="item-row">
+              <div class="item-name">${item.name}</div>
+              <div class="item-qty">x${item.qty}</div>
+              <div class="item-price">€${itemTotal.toFixed(2)}</div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      listDiv.innerHTML = html;
+    }
+  </script>
+</body>
+</html>

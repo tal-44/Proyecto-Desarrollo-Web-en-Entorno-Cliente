@@ -133,7 +133,7 @@ function handleRegister(e) {
   }
   const users = loadUsers();
   // Comprobamos si el usuario ya existe (insensible a mayúsculas/minúsculas)
-  const exists = users.some(u => u.username.toLowerCase() === username.toLowerCase());
+  const exists = users.some(u => u && u.username && u.username.toLowerCase() === username.toLowerCase());
   if (exists) {
     showError(errorP, 'El nombre de usuario ya está registrado.');
     return;
@@ -198,7 +198,7 @@ function handleLogin(e) {
   }
   
   const users = loadUsers();
-  const user = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+  const user = users.find(u => u && u.username && u.username.toLowerCase() === username.toLowerCase());
   
   if (!user) {
     showError(errorP, 'El usuario no existe. Por favor, regístrate primero.');

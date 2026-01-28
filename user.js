@@ -44,10 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // También podemos borrar preferencias u otros datos del usuario si existiesen
     location.reload();
   }
-  // Si hay un usuario logueado, mostramos su nombre y el enlace de salir
+  // Si hay un usuario logueado, mostramos su nombre, enlace de historial y cerrar sesión
   if (currentUser && currentUser.username) {
+    // Detectar si estamos en un subdirectorio para ajustar rutas
+    const currentPath = window.location.pathname;
+    const isInSubdirectory = currentPath.includes('/test/') || currentPath.includes('/ramos/');
+    const historyPath = isInSubdirectory ? '../history.html' : 'history.html';
+    
     userInfoDiv.innerHTML = `
       <span class="user-name">Hola, ${currentUser.username}</span>
+      <a href="${historyPath}" class="auth-link">📅 Historial</a>
       <a href="#" id="logout-link">Cerrar sesión</a>
     `;
     const logoutLink = document.getElementById('logout-link');

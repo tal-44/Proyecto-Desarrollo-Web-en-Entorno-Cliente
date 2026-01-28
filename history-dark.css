@@ -1,0 +1,136 @@
+/*
+ * history-dark.css
+ *
+ * Estilos específicos para el modo oscuro en la página de historial
+ * Se carga cuando dark-mode está activo en el body
+ */
+
+body.dark-mode .history-container {
+  /* Container se adapta automáticamente al fondo oscuro */
+}
+
+body.dark-mode .order-summary-section {
+  background-color: #2d2d2d;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
+}
+
+body.dark-mode .order-summary-section h3 {
+  color: #a8d5a8;
+  border-bottom-color: #a8d5a8;
+}
+
+body.dark-mode .order-details {
+  background-color: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #e8e8e8;
+}
+
+body.dark-mode .order-details h4 {
+  color: #a8d5a8;
+}
+
+body.dark-mode .order-details p {
+  color: #b0b0b0;
+}
+
+body.dark-mode .order-products {
+  background-color: #2d2d2d;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .product-item {
+  border-bottom-color: rgba(255, 255, 255, 0.05);
+  color: #b0b0b0;
+}
+
+body.dark-mode .product-name {
+  color: #e8e8e8;
+}
+
+body.dark-mode .product-price {
+  color: #a8d5a8;
+}
+
+body.dark-mode .order-total {
+  border-top-color: #a8d5a8;
+  color: #a8d5a8;
+}
+
+body.dark-mode .no-order-selected {
+  color: #666666;
+}
+
+body.dark-mode .btn-back {
+  color: #a8d5a8;
+  background-color: rgba(168, 213, 168, 0.1);
+}
+
+body.dark-mode .btn-back:hover {
+  background-color: rgba(168, 213, 168, 0.2);
+}
+
+body.dark-mode .fc {
+  background-color: #1e1e1e;
+  color: #e8e8e8;
+}
+
+body.dark-mode .fc-col-header-cell,
+body.dark-mode .fc-daygrid-day-number {
+  background-color: #2d2d2d;
+  color: #e8e8e8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .fc-daygrid-day {
+  background-color: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .fc-daygrid-day.fc-day-other {
+  background-color: #161616;
+}
+
+body.dark-mode .fc-daygrid-day.fc-day-today {
+  background-color: rgba(168, 213, 168, 0.1);
+}
+
+body.dark-mode .fc-button-primary {
+  background-color: #a8d5a8;
+  border-color: #a8d5a8;
+  color: #1e1e1e;
+}
+
+body.dark-mode .fc-button-primary:hover,
+body.dark-mode .fc-button-primary.fc-button-active {
+  background-color: #8ab078;
+  border-color: #8ab078;
+  color: #1e1e1e;
+}
+
+body.dark-mode .fc-theme-standard td,
+body.dark-mode .fc-theme-standard th {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .fc-list-event-title {
+  color: #e8e8e8;
+}
+
+body.dark-mode .fc-list-event-time {
+  color: #b0b0b0;
+}
+
+body.dark-mode .empty-state {
+  color: #666666;
+}
+
+body.dark-mode .empty-state-icon {
+  color: #a8d5a8;
+}
+
+/* Asegurar que el orden-details con estilo especial se vea bien en dark mode */
+body.dark-mode .order-details[style*="background-color: #e5f5e0"] {
+  background-color: rgba(168, 213, 168, 0.15) !important;
+  border-color: rgba(168, 213, 168, 0.3) !important;
+}
