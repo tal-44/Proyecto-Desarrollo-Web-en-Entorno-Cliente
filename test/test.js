@@ -65,12 +65,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         btnAnterior.disabled = numero === 1;
 
         if (numero === totalPreguntas) {
-            btnSiguiente.style.display = 'none';
-            btnResultado.style.display = 'inline-block';
+            btnSiguiente.classList.add('hidden');
+            btnResultado.classList.remove('hidden');
         } else {
-        btnSiguiente.style.display = 'inline-block';
-        btnResultado.style.display = 'none';
-    }
+            btnSiguiente.classList.remove('hidden');
+            btnResultado.classList.add('hidden');
+        }
 
         actualizarProgreso();
     };
@@ -250,8 +250,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       mostrarResultado(recomendacion);
 
       // Mostrar resultado y ocultar formulario
-    form.style.display = 'none';
-      resultadoContainer.style.display = 'block';
+      form.classList.add('hidden');
+      resultadoContainer.classList.remove('hidden');
 
       // Scroll suave al resultado
       resultadoContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -265,8 +265,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       mostrarPregunta(1);
 
       // Mostrar formulario y ocultar resultado
-      resultadoContainer.style.display = 'none';
-      form.style.display = 'flex';
+      resultadoContainer.classList.add('hidden');
+      form.classList.remove('hidden');
 
       // Scroll al inicio
       document.querySelector('.test-header').scrollIntoView({ behavior: 'smooth' });
